@@ -12,7 +12,7 @@ wants to check a specific box quickly.
 | Requirement | Where |
 |---|---|
 | All code in a single zip | The repository root |
-| `venv`, `__pycache__` and other local files gitignored | [`.gitignore`](../.gitignore) — 80 lines, with secrets in their own block at the top |
+| `venv`, `__pycache__` and other local files gitignored | [`.gitignore`](../.gitignore) — secrets in their own block at the top, then Python, database, Node, Terraform, editor and OS artefacts |
 
 `.gitignore` covers `.env`, `*.pem`, `*.key`, `venv/`, `__pycache__/`,
 `node_modules/`, `*.db`, `.terraform/`, `*.tfstate` and the editor and OS
