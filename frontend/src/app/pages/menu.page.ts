@@ -16,7 +16,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -47,6 +47,9 @@ export class MenuPage implements OnInit {
   /** The drink being edited, or 'new', or null when the form is closed. */
   readonly editing = signal<Drink | 'new' | null>(null);
 
+  /** Incremented to ask for a re-fetch without changing any other input. */
+  private readonly reloadCounter = signal(0);
+
   /** A permission the router refused, passed through as a query parameter. */
   readonly deniedPermission = signal<string | null>(null);
 
@@ -71,6 +74,16 @@ export class MenuPage implements OnInit {
     });
   });
 
+  constructor() {
+    // Re-fetch whenever the caller's permissions change, or when something
+    // asks for a reload. See fetchDrinks for why this is an effect.
+    effect(() => {
+      const detailed = this.canSeeRecipes();
+      this.reloadCounter();
+      this.fetchDrinks(detailed);
+    });
+  }
+
   readonly draft = computed<DrinkDraft | null>(() => {
     const target = this.editing();
     if (target === null) {
@@ -93,15 +106,36 @@ export class MenuPage implements OnInit {
 
   ngOnInit(): void {
     this.deniedPermission.set(this.route.snapshot.queryParamMap.get('denied'));
-    this.load();
   }
 
-  /** Fetch the menu at the richest level the caller is allowed. */
+  /** Ask for a re-fetch. Bumped by the Refresh button and after every write. */
   load(): void {
+    this.reloadCounter.update((count) => count + 1);
+  }
+
+  /**
+   * Fetch the menu at the richest level the caller is currently allowed.
+   *
+   * Driven by an effect rather than by ngOnInit, because the caller's
+   * permissions can change *after* this page has already rendered:
+   *
+   * * Coming back from Auth0, the router activates this route before the PKCE
+   *   code exchange has finished. A fetch at that moment sees no token and
+   *   returns the public short form -- no ingredient names -- and without this
+   *   effect the page would go on showing public data under a staff-level
+   *   caption once the token landed a moment later.
+   * * Signing out has to drop the ingredient names immediately, rather than
+   *   leaving recipes on screen until the next reload.
+   *
+   * `canSeeRecipes()` is read here explicitly, not left to be picked up
+   * transitively inside the request, so the dependency cannot be refactored
+   * away by accident.
+   */
+  private fetchDrinks(detailed: boolean): void {
     this.loading.set(true);
     this.error.set(null);
 
-    const request = this.canSeeRecipes()
+    const request = detailed
       ? this.drinksApi.listDetailed()
       : this.drinksApi.listPublic();
 

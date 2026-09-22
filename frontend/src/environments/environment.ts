@@ -19,13 +19,13 @@ export const environment = {
      * '.auth0.com' suffix; `domain` below is derived from this and is what
      * the code actually uses.
      */
-    url: '',
+    url: 'dev-owmerbiq21gsxcv5.us',
 
     /** The API Identifier you set on the Auth0 API, e.g. 'coffee-shop'. */
-    audience: '',
+    audience: 'coffee-shop',
 
     /** The Client ID of the Auth0 Single Page Application. */
-    clientId: '',
+    clientId: 'hDrxq0PagZskMV3a4rGxWiHQ94B6z86s',
 
     /** Where Auth0 sends the browser back to. Must be in Allowed Callback URLs. */
     callbackURL: 'http://localhost:8100',

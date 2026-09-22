@@ -156,3 +156,27 @@
   max-height: 380px;
   overflow-y: auto;
 }
+
+.panel__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.panel__hint {
+  margin: 0 0 14px;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: var(--cs-text-muted);
+
+  code {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 3px 8px;
+    background: rgba(43, 26, 18, 0.08);
+    border-radius: 5px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.8rem;
+    user-select: all;
+  }
+}

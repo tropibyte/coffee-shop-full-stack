@@ -80,6 +80,43 @@ export class ProfilePage implements OnInit {
     JSON.stringify(this.auth.claims() ?? {}, null, 2),
   );
 
+  /** Which --flag of set_postman_tokens.py this caller's token belongs to. */
+  readonly tokenFlag = computed(() => {
+    const rank = this.auth.rank();
+    if (rank >= 2) {
+      return 'admin';
+    }
+    return rank === 1 ? 'manager' : 'barista';
+  });
+
+  /** Briefly true after a successful copy, to confirm it happened. */
+  readonly copied = signal(false);
+
+  /**
+   * Copy the raw access token to the clipboard.
+   *
+   * The panel below shows *decoded* claims, which are the readable thing but
+   * not the thing Postman wants. Without this, the alternative is digging the
+   * raw string out of devtools -- and that is where it goes wrong, because a
+   * token truncated mid-copy fails verification with an error that points
+   * nowhere useful.
+   */
+  async copyToken(): Promise<void> {
+    const token = this.auth.token();
+    if (!token) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(token);
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 2400);
+    } catch {
+      // Clipboard access can be refused; the raw token is shown below when
+      // claims are expanded, so it can still be selected by hand.
+      this.copied.set(false);
+    }
+  }
+
   ngOnInit(): void {
     // Ask the API who it thinks we are. When this disagrees with the token,
     // the token is stale -- roles changed since it was issued.

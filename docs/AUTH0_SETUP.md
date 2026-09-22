@@ -186,6 +186,29 @@ Then scroll to **Advanced Settings → Grant Types** and confirm:
 
 **Save Changes.**
 
+### 3a. Authorise this application for the Coffee Shop API
+
+**Do not skip this.** Recent Auth0 tenants require an application to be
+explicitly granted access to an API before it may request tokens for it;
+older tenants allowed it implicitly for user-facing flows, which is why most
+walkthroughs of this project never mention it.
+
+Either route works:
+
+- **Applications → Coffee Shop Web → API Access** → authorise **Coffee Shop**
+- or **Applications → APIs → Coffee Shop → Application Access** → enable
+  **Coffee Shop Web**
+
+Miss it and sign-in fails at the `/authorize` redirect with:
+
+```
+invalid_request: Client "<client id>" is not authorized to
+access resource server "coffee-shop"
+```
+
+The **Coffee Shop Management** application does *not* need a grant here — it
+talks to the Auth0 Management API, not to this one.
+
 > **Why Authorization Code and not Implicit?** The implicit flow returns the
 > access token in the URL fragment, where it lands in browser history and in
 > the referrer of the next outbound link. Authorization Code with PKCE returns
@@ -428,6 +451,7 @@ Tick these off and everything downstream works.
 - [ ] SPA `Coffee Shop Web` created; Client ID copied
 - [ ] Callback, Logout and Web Origin URLs all set to the Ionic origin
 - [ ] Authorization Code grant enabled
+- [ ] **Coffee Shop Web authorised for the Coffee Shop API** (step 3a)
 - [ ] M2M `Coffee Shop Management` created, authorised for the Management API
 - [ ] Exactly the nine Management scopes granted
 - [ ] Action deployed **and added to the post-login trigger**
@@ -448,6 +472,7 @@ causes it.
 
 | What you see | What it means | Fix |
 |---|---|---|
+| `invalid_request` — "Client ... is not authorized to access resource server" | The SPA has no grant on the Coffee Shop API. | Step 3a — authorise **Coffee Shop Web** under the API's **Application Access** tab. |
 | `403 invalid_permissions_claim` | The token has no `permissions` array. | Step 1a — **Add Permissions in the Access Token** is off. |
 | `401 invalid_claims` — "check the audience and issuer" | The token was issued for a different API, or a different tenant. | `AUTH0_API_AUDIENCE` must equal the API Identifier exactly, and `audience` in `environment.ts` must match both. |
 | `401 invalid_header` — "Unable to find the appropriate signing key" | The API is verifying against a different tenant's keys. | `AUTH0_DOMAIN` in `.env` and `url` in `environment.ts` must name the same tenant. `/diagnostics` flags this explicitly. |

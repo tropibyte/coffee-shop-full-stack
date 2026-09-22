@@ -72,10 +72,24 @@
   <section class="panel cs-card">
     <div class="panel__header">
       <h2 class="panel__title">The token itself</h2>
-      <button class="chip-button" type="button" (click)="toggleRawClaims()">
-        {{ showRawClaims() ? 'Hide claims' : 'Show claims' }}
-      </button>
+      <div class="panel__actions">
+        <button
+          class="chip-button chip-button--primary"
+          type="button"
+          (click)="copyToken()"
+        >
+          {{ copied() ? 'Copied' : 'Copy access token' }}
+        </button>
+        <button class="chip-button" type="button" (click)="toggleRawClaims()">
+          {{ showRawClaims() ? 'Hide claims' : 'Show claims' }}
+        </button>
+      </div>
     </div>
+
+    <p class="panel__hint">
+      This is the raw string the Postman collection needs. Copy it, then:
+      <code>python scripts/set_postman_tokens.py --{{ tokenFlag() }} "&lt;paste&gt;"</code>
+    </p>
 
     <div class="cs-notice cs-notice--info">
       <span aria-hidden="true">🔎</span>
