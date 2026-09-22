@@ -25,12 +25,14 @@ name: Deploy to Azure
 #   AUTH0_AUDIENCE                   e.g. coffee-shop
 #   AUTH0_CLIENT_ID                  the SPA client id (public)
 
+# Manual only.
+#
+# This used to also run on every push to main. With no Azure secrets
+# configured the deploy jobs were skipped and the workflow reported success,
+# which reads as "deployed" on the commit list when nothing was deployed.
+# Add the push trigger back once the infrastructure exists and the repository
+# secrets in docs/DEPLOYMENT.md are set.
 on:
-  push:
-    branches: [main, master]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
   workflow_dispatch:
     inputs:
       deploy_backend:

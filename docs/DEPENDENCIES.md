@@ -54,23 +54,23 @@ three lines in `backend/src/auth/auth.py` — but it would be a downgrade.
 | **Werkzeug 3.1** | Flask 3's pair. Also the layer that rejects newline-carrying header values before the app sees them. |
 | **Flask-SQLAlchemy 3.1 / SQLAlchemy 2.0** | SQLAlchemy 1.4's `Query.get()` and the starter's `db.app = app` are both gone in 3.x. `db.session.get(Model, id)` is the modern form. |
 | **Flask-Migrate / Alembic** | Present so a schema change after deployment is a migration rather than a `drop_all`. |
-| **Flask-Cors 5.0** | Explicit origin allow-list. The API is called with a bearer token, so a wildcard would let any page on the internet make authenticated calls. |
-| **PyJWT 2.10 + cryptography 44** | See above. |
-| **requests 2.32** | The Auth0 Management API client, and the JWKS fetch. Chosen over `urllib` (which the starter uses) because it has real timeouts, and because `responses` can intercept it — which is what lets the test suite exercise the whole verification path with no network. |
-| **Flask-Limiter 3.10** | Rate limiting. Keyed on a hash of the bearer token rather than the source address. |
-| **python-dotenv 1.0** | Loads `.env`. Imported by `src/config.py` at module level, because the configuration classes read `os.environ` in their class bodies — loading it any later would be too late. |
-| **gunicorn 23** | Production WSGI server for the container and for Azure App Service. |
+| **Flask-Cors** | Explicit origin allow-list. The API is called with a bearer token, so a wildcard would let any page on the internet make authenticated calls. |
+| **PyJWT + cryptography** | See above. |
+| **requests** | The Auth0 Management API client, and the JWKS fetch. Chosen over `urllib` (which the starter uses) because it has real timeouts, and because `responses` can intercept it — which is what lets the test suite exercise the whole verification path with no network. |
+| **Flask-Limiter** | Rate limiting. Keyed on a hash of the bearer token rather than the source address. |
+| **python-dotenv** | Loads `.env`. Imported by `src/config.py` at module level, because the configuration classes read `os.environ` in their class bodies — loading it any later would be too late. |
+| **gunicorn** | Production WSGI server for the container and for Azure App Service. |
 
 ### Development
 
 | Package | Why |
 |---|---|
-| **pytest 8.3 + pytest-cov** | 326 tests, 85% statement coverage. |
-| **responses 0.25** | Intercepts every outbound `requests` call. Unregistered requests raise, so a test that reaches the internet fails loudly instead of going quiet and slow. |
-| **freezegun 1.5** | Time travel for expiry tests. |
+| **pytest 9 + pytest-cov** | 326 tests, 85% statement coverage. |
+| **responses** | Intercepts every outbound `requests` call. Unregistered requests raise, so a test that reaches the internet fails loudly instead of going quiet and slow. |
+| **freezegun** | Time travel for expiry tests. |
 | **flake8 / black / isort** | PEP 8 enforcement in CI, not by inspection. |
-| **bandit 1.8** | Source-level security linter. Clean. |
-| **pip-audit 2.7** | Dependency advisory scanner. Runs on every push. |
+| **bandit** | Source-level security linter. Clean. |
+| **pip-audit** | Dependency advisory scanner. Runs on every push. |
 
 ---
 
@@ -118,6 +118,19 @@ where the rubric says they go.
 | **A component library beyond Ionic** | Ionic plus about 600 lines of CSS. |
 
 ---
+
+## On keeping the pins current
+
+Pinning exactly is what makes a reviewer's install reproducible. It is also
+what lets a tree quietly rot: this project was first pinned in early 2025 and
+CI's `pip-audit` later flagged **33 advisories across 10 packages**, three of
+them in PyJWT itself.
+
+That is not an argument against the library choice -- PyJWT shipped fixes for
+all three, which is precisely the property python-jose lacks -- but it is a
+reminder that "we picked the secure library" has a shelf life. The pins are
+now current, `pip-audit --strict` passes on both requirement files, and CI
+fails the build the day that stops being true.
 
 ## Supply chain
 

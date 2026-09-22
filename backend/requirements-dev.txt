@@ -5,21 +5,21 @@
 -r requirements.txt
 
 # --- Test runner -----------------------------------------------------------
-pytest==8.3.4
-pytest-cov==6.0.0
-coverage==7.6.10
+pytest==9.1.1
+pytest-cov==7.1.0
+coverage==7.16.1
 
 # --- Test doubles ----------------------------------------------------------
-responses==0.25.6        # records/replays the Auth0 JWKS + Management API
-freezegun==1.5.1         # travels through time to test token expiry
+responses==0.26.3        # records/replays the Auth0 JWKS + Management API
+freezegun==1.5.5         # travels through time to test token expiry
 
 # --- Style and static analysis ---------------------------------------------
-flake8==7.1.1
-pycodestyle==2.12.1
-pyflakes==3.2.0
-black==24.10.0
-isort==5.13.2
+flake8==7.3.0
+pycodestyle==2.14.0
+pyflakes==3.4.0
+black==26.5.1
+isort==9.0.1
 
 # --- Security tooling ------------------------------------------------------
-bandit==1.8.2            # source-level security linter
+bandit==1.9.4            # source-level security linter
 pip-audit==2.7.3         # dependency CVE scanner

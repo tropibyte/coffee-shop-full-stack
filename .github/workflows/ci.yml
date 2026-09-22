@@ -169,9 +169,18 @@ jobs:
           fetch-depth: 0 # gitleaks needs history to scan the whole diff
 
       - name: gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Run the binary rather than gitleaks-action, which derives a commit
+        # range from the push event. On a repository's first push that range
+        # is `<initial commit>^..<head>`, and the initial commit has no
+        # parent -- so git rejects the revision and the action fails having
+        # scanned nothing at all. Scanning the full history is deterministic
+        # and does not depend on what the push happened to contain.
+        run: |
+          version=8.24.3
+          base=https://github.com/gitleaks/gitleaks/releases/download
+          curl -sSfL "$base/v${version}/gitleaks_${version}_linux_x64.tar.gz" \
+            | tar -xz -C /tmp gitleaks
+          /tmp/gitleaks detect --source . --redact --verbose --exit-code 1
 
       - name: No committed Postman tokens
         # The collection is meant to carry JWTs when it is submitted, and
@@ -305,7 +314,16 @@ jobs:
         env:
           AUTH0_DOMAIN: ci.example.auth0.com
           AUTH0_API_AUDIENCE: coffee-shop
-          MANAGEMENT_API_ENABLED: 'false'
+          # The user endpoints are registered with placeholder credentials so
+          # that `GET /users` answers 401 rather than 404. An unauthenticated
+          # request is refused by @requires_auth before any Management API
+          # call is attempted, so these values are never used -- and the
+          # collection's "everything except the menu is 401" assertion stays
+          # meaningful. With the blueprint unregistered it would pass for the
+          # wrong reason, or fail as it did here.
+          MANAGEMENT_API_ENABLED: 'true'
+          AUTH0_M2M_CLIENT_ID: ci-placeholder-not-a-real-client
+          AUTH0_M2M_CLIENT_SECRET: ci-placeholder-not-a-real-secret
           DB_SEED_IF_EMPTY: 'true'
           LOG_FORMAT: json
         run: |
