@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": { "value": "coffee-shop" },
+    "appServicePlanSku": { "value": "F1" },
+    "staticWebAppLocation": { "value": "eastus2" },
+
+    "auth0Domain": { "value": "REPLACE-ME.us.auth0.com" },
+    "auth0Audience": { "value": "coffee-shop" },
+    "auth0ClientId": { "value": "" },
+
+    "managementApiEnabled": { "value": true },
+    "auth0M2mClientId": { "value": "" }
+  }
+}

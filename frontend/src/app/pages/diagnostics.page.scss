@@ -1,0 +1,208 @@
+/* Diagnostics: configuration checks, API summary, live RBAC matrix. */
+
+.panel {
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.panel__title {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  font-weight: 680;
+}
+
+.panel__note {
+  margin: -8px 0 16px;
+  font-size: 0.83rem;
+  color: var(--cs-text-muted);
+  line-height: 1.5;
+  max-width: 62ch;
+}
+
+/* --- Checks -------------------------------------------------------------- */
+
+.checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.check {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 11px 13px;
+  border-radius: var(--cs-radius-sm);
+  border: 1px solid color-mix(in srgb, var(--ion-color-success) 34%, transparent);
+  background: color-mix(in srgb, var(--ion-color-success) 7%, var(--cs-surface));
+}
+
+.check--bad {
+  border-color: color-mix(in srgb, var(--ion-color-warning) 46%, transparent);
+  background: color-mix(in srgb, var(--ion-color-warning) 9%, var(--cs-surface));
+}
+
+.check__mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.74rem;
+  font-weight: 800;
+  flex: none;
+  background: var(--ion-color-success);
+  color: var(--ion-color-success-contrast);
+}
+
+.check--bad .check__mark {
+  background: var(--ion-color-warning);
+  color: var(--ion-color-warning-contrast);
+}
+
+.check__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.check__label {
+  font-weight: 640;
+  font-size: 0.88rem;
+}
+
+.check__detail {
+  font-size: 0.81rem;
+  color: var(--cs-text-muted);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* --- API summary --------------------------------------------------------- */
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 7px 16px;
+  margin: 0 0 16px;
+  font-size: 0.86rem;
+
+  dt {
+    color: var(--cs-text-faint);
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+    word-break: break-word;
+  }
+}
+
+.mono {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.82rem;
+}
+
+.features {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.feature {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ion-color-success) 15%, transparent);
+  color: var(--ion-color-success);
+  text-transform: capitalize;
+}
+
+.feature--off {
+  background: var(--cs-border);
+  color: var(--cs-text-faint);
+}
+
+/* --- Matrix -------------------------------------------------------------- */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  min-width: 520px;
+
+  th,
+  td {
+    padding: 9px 12px;
+    text-align: left;
+  }
+
+  thead th {
+    font-size: 0.71rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cs-text-muted);
+    border-bottom: 1px solid var(--cs-border-strong);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--cs-border);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+.method {
+  font-weight: 700;
+  color: var(--cs-text-muted);
+  white-space: nowrap;
+}
+
+.req {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.79rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--cs-border);
+}
+
+.req--public {
+  background: color-mix(in srgb, var(--cs-udacity-blue) 18%, transparent);
+  color: var(--cs-text);
+  font-weight: 600;
+}
+
+.verdict {
+  font-weight: 800;
+}
+
+.verdict--yes {
+  color: var(--ion-color-success);
+}
+
+.verdict--no {
+  color: var(--cs-text-faint);
+}
+
+@media (max-width: 560px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 2px;
+
+    dd {
+      margin-bottom: 8px;
+    }
+  }
+}

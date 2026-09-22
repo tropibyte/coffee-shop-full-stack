@@ -1,0 +1,86 @@
+# ---------------------------------------------------------------------------
+# Secrets  -- never commit anything in this block
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+auth0/*.auto.tfvars
+auth0/terraform.tfvars
+.auth0-cli-config.json
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+.eggs/
+.installed.cfg
+pip-wheel-metadata/
+
+# Test and coverage artefacts
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+junit*.xml
+bandit-report.json
+pip-audit-report.json
+
+# ---------------------------------------------------------------------------
+# Database  -- a local SQLite file is developer state, not source
+# ---------------------------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+backend/src/database/database.db
+
+# ---------------------------------------------------------------------------
+# Node / Angular / Ionic
+# ---------------------------------------------------------------------------
+node_modules/
+frontend/www/
+frontend/.angular/
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+npm-debug.log*
+yarn-error.log*
+.ionic/
+.sourcemaps/
+platforms/
+plugins/
+
+# ---------------------------------------------------------------------------
+# Terraform
+# ---------------------------------------------------------------------------
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# ---------------------------------------------------------------------------
+# Editors and operating systems
+# ---------------------------------------------------------------------------
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini

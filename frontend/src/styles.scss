@@ -1,0 +1,313 @@
+/* ---------------------------------------------------------------------------
+   Global stylesheet.
+
+   Ionic's own CSS first, then the Coffee Shop theme, then the handful of
+   app-wide utilities that are genuinely shared.  Component-specific styling
+   lives with its component.
+   ------------------------------------------------------------------------ */
+
+@use '@ionic/angular/css/core.css';
+@use '@ionic/angular/css/normalize.css';
+@use '@ionic/angular/css/structure.css';
+@use '@ionic/angular/css/typography.css';
+@use '@ionic/angular/css/display.css';
+@use '@ionic/angular/css/padding.css';
+@use '@ionic/angular/css/flex-utils.css';
+@use '@ionic/angular/css/text-alignment.css';
+
+@use 'theme/variables';
+
+/* ---------------------------------------------------------------------------
+   Return the document to normal scrolling.
+
+   Ionic styles `body` as `position: fixed; overflow: hidden` and `ion-app` as
+   an absolutely positioned, `contain: size`-ed viewport box, on the
+   assumption that an `ion-content` inside does the scrolling.  This app uses a
+   sticky header over ordinary document flow instead, so the page has to scroll
+   the way a page does.
+
+   These selectors are deliberately more specific than Ionic's own.
+   `html > body` beats `body`.  ion-app is given the `.ion-page` class at
+   runtime, and `.ion-page` is what actually applies `position: absolute`,
+   `overflow: hidden` and `contain: size layout style` -- so the override has
+   to be `ion-app.ion-page`, which outranks it.  Ionic's theming, components
+   and CSS variables are untouched.
+   ------------------------------------------------------------------------ */
+
+html > body {
+  position: static;
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+ion-app.ion-page {
+  position: static;
+  display: block;
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+  /* `contain: size` promises the browser this element's size does not depend
+     on its contents, which collapses the whole page to one viewport. */
+  contain: none;
+}
+
+/* --- Page scaffolding ---------------------------------------------------- */
+
+ion-content {
+  --background: var(--cs-page);
+}
+
+.cs-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+
+.cs-page-header {
+  margin: 4px 0 20px;
+
+  h1 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+    color: var(--cs-text);
+  }
+
+  p {
+    margin: 0;
+    color: var(--cs-text-muted);
+    font-size: 0.94rem;
+    line-height: 1.5;
+    max-width: 62ch;
+  }
+}
+
+/* --- Cards --------------------------------------------------------------- */
+
+.cs-card {
+  background: var(--cs-surface);
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius);
+  box-shadow: var(--cs-shadow);
+}
+
+/* --- Badges -------------------------------------------------------------- */
+
+.cs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.cs-badge--guest {
+  background: rgba(109, 90, 78, 0.12);
+  color: var(--cs-text-muted);
+  border-color: var(--cs-border);
+}
+
+.cs-badge--barista {
+  background: rgba(46, 196, 241, 0.16);
+  color: #1b7fa0;
+  border-color: rgba(46, 196, 241, 0.4);
+}
+
+.cs-badge--manager {
+  background: rgba(200, 162, 122, 0.24);
+  color: #7a5730;
+  border-color: rgba(200, 162, 122, 0.55);
+}
+
+.cs-badge--administrator {
+  background: rgba(179, 50, 42, 0.14);
+  color: #96291f;
+  border-color: rgba(179, 50, 42, 0.38);
+}
+
+/* Badge text needs lifting off the dark surface; the mixin keeps the two
+   dark-mode entry points (system preference and pinned theme) in step. */
+@mixin badge-dark {
+  .cs-badge--barista { color: #7fdcf7; }
+  .cs-badge--manager { color: #e2c197; }
+  .cs-badge--administrator { color: #f0918a; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include badge-dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include badge-dark;
+}
+
+/* --- Shared small controls -----------------------------------------------
+   Used by more than one component, so they cannot live in a component's
+   scoped stylesheet: Angular's view encapsulation would keep them from
+   reaching the dialog, which is a different component from the page that
+   opens it.
+   ------------------------------------------------------------------------ */
+
+.chip-button {
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--cs-border-strong);
+  background: var(--cs-surface);
+  color: var(--cs-text);
+  cursor: pointer;
+  transition: background 0.14s ease, border-color 0.14s ease;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--cs-crema) 18%, var(--cs-surface));
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.chip-button--primary {
+  background: var(--ion-color-primary);
+  border-color: transparent;
+  color: var(--ion-color-primary-contrast);
+
+  &:hover:not(:disabled) {
+    background: var(--ion-color-primary-shade);
+  }
+}
+
+.chip-button--danger {
+  color: var(--ion-color-danger);
+  border-color: color-mix(in srgb, var(--ion-color-danger) 42%, transparent);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--ion-color-danger) 12%, var(--cs-surface));
+  }
+}
+
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin-left: auto;
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--cs-text-muted);
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+
+/* --- Empty and error states ---------------------------------------------- */
+
+.cs-empty {
+  text-align: center;
+  padding: 56px 24px;
+  color: var(--cs-text-muted);
+
+  .cs-empty__icon {
+    font-size: 2.6rem;
+    margin-bottom: 12px;
+    opacity: 0.55;
+  }
+
+  h2 {
+    font-size: 1.05rem;
+    font-weight: 650;
+    margin: 0 0 6px;
+    color: var(--cs-text);
+  }
+
+  p {
+    margin: 0 auto;
+    max-width: 44ch;
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+}
+
+.cs-notice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 13px 15px;
+  border-radius: var(--cs-radius-sm);
+  font-size: 0.89rem;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  border: 1px solid;
+}
+
+.cs-notice--info {
+  background: rgba(46, 196, 241, 0.09);
+  border-color: rgba(46, 196, 241, 0.32);
+  color: var(--cs-text);
+}
+
+.cs-notice--warn {
+  background: rgba(217, 140, 43, 0.1);
+  border-color: rgba(217, 140, 43, 0.36);
+  color: var(--cs-text);
+}
+
+.cs-notice--error {
+  background: rgba(179, 50, 42, 0.1);
+  border-color: rgba(179, 50, 42, 0.36);
+  color: var(--cs-text);
+}
+
+.cs-notice code {
+  background: rgba(43, 26, 18, 0.1);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.86em;
+}
+
+/* --- Accessibility ------------------------------------------------------- */
+
+/* A visible focus ring, because Ionic removes the browser default. */
+:focus-visible {
+  outline: 2px solid var(--cs-udacity-blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.cs-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

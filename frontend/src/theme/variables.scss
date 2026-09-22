@@ -1,0 +1,151 @@
+/* ---------------------------------------------------------------------------
+   Coffee Shop theme.
+
+   Ionic's default palette is a blue iOS/Material hybrid.  This replaces it
+   with something that reads like a cafe: roasted browns, crema, and a single
+   Udacity-blue accent reserved for actions.  Every colour is defined once,
+   here, so dark mode is a redefinition rather than a set of overrides
+   scattered through component stylesheets.
+   ------------------------------------------------------------------------ */
+
+:root {
+  /* --- Brand ------------------------------------------------------------ */
+  --cs-espresso: #2b1a12;
+  --cs-roast: #4b2e1e;
+  --cs-crema: #c8a27a;
+  --cs-foam: #f4e6cd;
+  --cs-parchment: #faf5ed;
+  --cs-udacity-blue: #2ec4f1;
+
+  /* --- Surfaces --------------------------------------------------------- */
+  --cs-surface: #ffffff;
+  --cs-surface-raised: #fffdf9;
+  --cs-page: var(--cs-parchment);
+  --cs-border: rgba(43, 26, 18, 0.12);
+  --cs-border-strong: rgba(43, 26, 18, 0.24);
+  --cs-shadow: 0 1px 2px rgba(43, 26, 18, 0.06),
+    0 8px 24px rgba(43, 26, 18, 0.08);
+  --cs-shadow-lifted: 0 2px 4px rgba(43, 26, 18, 0.08),
+    0 16px 40px rgba(43, 26, 18, 0.14);
+
+  /* --- Text ------------------------------------------------------------- */
+  --cs-text: #2b1a12;
+  --cs-text-muted: #6d5a4e;
+  --cs-text-faint: #99887c;
+  --cs-text-inverse: #fdf8f2;
+
+  --cs-radius: 14px;
+  --cs-radius-sm: 9px;
+
+  /* --- Ionic primaries -------------------------------------------------- */
+  --ion-color-primary: #4b2e1e;
+  --ion-color-primary-rgb: 75, 46, 30;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #422919;
+  --ion-color-primary-tint: #5d4335;
+
+  --ion-color-secondary: #2ec4f1;
+  --ion-color-secondary-rgb: 46, 196, 241;
+  --ion-color-secondary-contrast: #07222b;
+  --ion-color-secondary-contrast-rgb: 7, 34, 43;
+  --ion-color-secondary-shade: #28acd4;
+  --ion-color-secondary-tint: #43caf2;
+
+  --ion-color-tertiary: #c8a27a;
+  --ion-color-tertiary-rgb: 200, 162, 122;
+  --ion-color-tertiary-contrast: #2b1a12;
+  --ion-color-tertiary-contrast-rgb: 43, 26, 18;
+  --ion-color-tertiary-shade: #b08f6b;
+  --ion-color-tertiary-tint: #cdab87;
+
+  --ion-color-success: #2e8b57;
+  --ion-color-success-rgb: 46, 139, 87;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-shade: #287a4d;
+  --ion-color-success-tint: #439768;
+
+  --ion-color-warning: #d98c2b;
+  --ion-color-warning-rgb: 217, 140, 43;
+  --ion-color-warning-contrast: #2b1a12;
+  --ion-color-warning-shade: #bf7b26;
+  --ion-color-warning-tint: #dd9840;
+
+  --ion-color-danger: #b3322a;
+  --ion-color-danger-rgb: 179, 50, 42;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-shade: #9e2c25;
+  --ion-color-danger-tint: #bb473f;
+
+  --ion-background-color: var(--cs-page);
+  --ion-background-color-rgb: 250, 245, 237;
+  --ion-text-color: var(--cs-text);
+  --ion-text-color-rgb: 43, 26, 18;
+  --ion-toolbar-background: var(--cs-roast);
+  --ion-toolbar-color: var(--cs-foam);
+  --ion-item-background: transparent;
+  --ion-card-background: var(--cs-surface);
+
+  --ion-font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter',
+    system-ui, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+   Dark mode.
+
+   Applies when the operating system asks for it, unless the user has pinned
+   the app to light; and always when they have pinned it to dark.
+   ------------------------------------------------------------------------ */
+
+@mixin coffee-dark {
+  --cs-surface: #221812;
+  --cs-surface-raised: #2b1f17;
+  --cs-page: #17100c;
+  --cs-border: rgba(244, 230, 205, 0.12);
+  --cs-border-strong: rgba(244, 230, 205, 0.26);
+  --cs-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.36);
+  --cs-shadow-lifted: 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 16px 40px rgba(0, 0, 0, 0.45);
+
+  --cs-text: #f4e6cd;
+  --cs-text-muted: #c2ad99;
+  --cs-text-faint: #8d7b6c;
+  --cs-text-inverse: #17100c;
+
+  --ion-color-primary: #c8a27a;
+  --ion-color-primary-rgb: 200, 162, 122;
+  --ion-color-primary-contrast: #17100c;
+  --ion-color-primary-contrast-rgb: 23, 16, 12;
+  --ion-color-primary-shade: #b08f6b;
+  --ion-color-primary-tint: #cdab87;
+
+  --ion-color-danger: #e2685e;
+  --ion-color-danger-rgb: 226, 104, 94;
+  --ion-color-danger-contrast: #17100c;
+
+  --ion-color-success: #5cb98a;
+  --ion-color-success-rgb: 92, 185, 138;
+  --ion-color-success-contrast: #17100c;
+
+  --ion-color-warning: #e8a95a;
+  --ion-color-warning-rgb: 232, 169, 90;
+  --ion-color-warning-contrast: #17100c;
+
+  --ion-background-color: var(--cs-page);
+  --ion-background-color-rgb: 23, 16, 12;
+  --ion-text-color: var(--cs-text);
+  --ion-text-color-rgb: 244, 230, 205;
+  --ion-toolbar-background: #2b1f17;
+  --ion-toolbar-color: var(--cs-foam);
+  --ion-card-background: var(--cs-surface);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include coffee-dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include coffee-dark;
+}

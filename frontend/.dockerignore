@@ -1,0 +1,10 @@
+node_modules/
+www/
+dist/
+.angular/
+.git/
+.vscode/
+*.log
+Dockerfile
+.dockerignore
+README.md

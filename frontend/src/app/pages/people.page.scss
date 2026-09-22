@@ -1,0 +1,286 @@
+/* User administration table and the invite panel. */
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.search {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.search__input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.92rem;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--cs-border);
+  background: var(--cs-surface);
+  color: var(--cs-text);
+
+  &:focus {
+    border-color: var(--cs-udacity-blue);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46, 196, 241, 0.2);
+  }
+}
+
+.toolbar__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: var(--cs-text-muted);
+}
+
+/* --- Invite panel -------------------------------------------------------- */
+
+.invite {
+  padding: 20px;
+  margin-bottom: 22px;
+}
+
+.invite__title {
+  margin: 0 0 16px;
+  font-size: 1rem;
+  font-weight: 680;
+}
+
+.invite__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.invite__actions {
+  display: flex;
+  gap: 9px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.field {
+  display: block;
+}
+
+.field__label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cs-text-muted);
+  margin-bottom: 6px;
+}
+
+.field__optional {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.field__input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.89rem;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--cs-border-strong);
+  background: var(--cs-surface);
+  color: var(--cs-text);
+
+  &:focus {
+    border-color: var(--cs-udacity-blue);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46, 196, 241, 0.2);
+  }
+}
+
+.field__error {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.78rem;
+  color: var(--ion-color-danger);
+  font-weight: 550;
+}
+
+/* --- One-time setup link ------------------------------------------------- */
+
+.setup__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.setup__note {
+  margin: 5px 0 10px;
+  font-size: 0.83rem;
+  color: var(--cs-text-muted);
+  line-height: 1.5;
+}
+
+.setup__url {
+  display: block;
+  padding: 9px 11px;
+  background: rgba(43, 26, 18, 0.08);
+  border-radius: 7px;
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.76rem;
+  word-break: break-all;
+  line-height: 1.5;
+  user-select: all;
+}
+
+.setup__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 11px;
+}
+
+/* --- Table --------------------------------------------------------------- */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  min-width: 720px;
+
+  th,
+  td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  thead th {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cs-text-muted);
+    border-bottom: 1px solid var(--cs-border-strong);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--cs-border);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: color-mix(in srgb, var(--cs-crema) 8%, transparent);
+    }
+  }
+}
+
+.row--busy {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.cell-person {
+  font-weight: 500;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.person__name {
+  font-weight: 600;
+  color: var(--cs-text);
+}
+
+.person__email {
+  font-size: 0.78rem;
+  color: var(--cs-text-faint);
+}
+
+.cell-muted {
+  color: var(--cs-text-muted);
+  white-space: nowrap;
+}
+
+.cell-sub {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--cs-text-faint);
+}
+
+.cell-actions {
+  display: flex;
+  gap: 7px;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+.role-select {
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--cs-border-strong);
+  background: var(--cs-surface);
+  color: var(--cs-text);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* --- Status pills -------------------------------------------------------- */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  &::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+
+.status--active {
+  color: var(--ion-color-success);
+}
+
+.status--blocked {
+  color: var(--ion-color-danger);
+}
+
+.status--pending {
+  color: var(--ion-color-warning);
+}
+
+.footnote {
+  margin: 14px 2px 0;
+  font-size: 0.8rem;
+  color: var(--cs-text-faint);
+  line-height: 1.5;
+}

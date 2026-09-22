@@ -1,0 +1,239 @@
+name: Deploy to Azure
+
+# Deploys the API to Linux App Service and the Ionic app to Static Web Apps.
+#
+# Authentication is OIDC federated credentials, not a stored service principal
+# secret: GitHub presents a short-lived token that Entra ID trusts for this
+# repository and this environment only. There is no long-lived Azure
+# credential in this repository to leak.
+#
+# Setting it up is documented in docs/DEPLOYMENT.md. Required repository
+# secrets:
+#
+#   AZURE_CLIENT_ID                  the app registration's client id
+#   AZURE_TENANT_ID                  the Entra ID tenant
+#   AZURE_SUBSCRIPTION_ID            the target subscription
+#   AZURE_STATIC_WEB_APPS_API_TOKEN  deployment token for the static site
+#
+# And these repository variables, which are not secret:
+#
+#   AZURE_RESOURCE_GROUP             e.g. coffee-shop-rg
+#   AZURE_API_APP_NAME               from the Bicep output apiAppName
+#   API_URL                          from the Bicep output apiUrl
+#   FRONTEND_URL                     from the Bicep output frontendUrl
+#   AUTH0_DOMAIN_PREFIX              tenant domain WITHOUT .auth0.com
+#   AUTH0_AUDIENCE                   e.g. coffee-shop
+#   AUTH0_CLIENT_ID                  the SPA client id (public)
+
+on:
+  push:
+    branches: [main, master]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      deploy_backend:
+        description: 'Deploy the API'
+        type: boolean
+        default: true
+      deploy_frontend:
+        description: 'Deploy the frontend'
+        type: boolean
+        default: true
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false # never interrupt a deployment mid-flight
+
+permissions:
+  id-token: write # required for OIDC
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  gate:
+    name: Tests must pass first
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - run: pytest -q
+
+  # ---------------------------------------------------------------------------
+  backend:
+    name: API → App Service
+    needs: gate
+    if: inputs.deploy_backend != false
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.API_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Package the application
+        # Oryx installs requirements.txt on the App Service side, so the
+        # archive carries source and nothing else. Tests, scripts and any
+        # local database are deliberately excluded.
+        run: |
+          cd backend
+          zip -r ../api.zip . \
+            -x '*.pyc' \
+            -x '__pycache__/*' -x '*/__pycache__/*' \
+            -x 'tests/*' \
+            -x 'scripts/*' \
+            -x 'venv/*' -x '.venv/*' \
+            -x '.pytest_cache/*' \
+            -x 'htmlcov/*' \
+            -x '.env' \
+            -x 'src/database/database.db' \
+            -x '*.postman_collection.json' \
+            -x 'Dockerfile' -x '.dockerignore'
+          unzip -l ../api.zip | tail -5
+
+      - name: Refuse to deploy a package containing secrets
+        run: |
+          if unzip -l api.zip | grep -qE '\.env$|database\.db$'; then
+            echo "::error::the deployment package contains a secret or a local database"
+            exit 1
+          fi
+          echo "Package is clean."
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_API_APP_NAME }}
+          package: api.zip
+
+      - name: Wait for the instance to report ready
+        run: |
+          echo "Waiting for ${{ vars.API_URL }}/health/ready"
+          for i in $(seq 1 40); do
+            code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+                   "${{ vars.API_URL }}/health/ready" || true)
+            if [ "$code" = "200" ]; then
+              echo "Ready after ${i} attempt(s)."
+              exit 0
+            fi
+            echo "  attempt ${i}: HTTP ${code}"
+            sleep 10
+          done
+          echo "::error::the API never reported ready"
+          curl --silent "${{ vars.API_URL }}/health/ready" || true
+          exit 1
+
+      - name: Smoke test
+        run: |
+          set -e
+          echo "--- the menu is public ---"
+          curl --silent --fail "${{ vars.API_URL }}/drinks" | head -c 300; echo
+
+          echo "--- recipes are not ---"
+          code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+                 "${{ vars.API_URL }}/drinks-detail")
+          [ "$code" = "401" ] || { echo "::error::expected 401, got $code"; exit 1; }
+
+          echo "--- writes are not ---"
+          code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+                 -X POST "${{ vars.API_URL }}/drinks")
+          [ "$code" = "401" ] || { echo "::error::expected 401, got $code"; exit 1; }
+
+          echo "--- HTTPS is enforced ---"
+          code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+                 "$(echo '${{ vars.API_URL }}' | sed 's/https:/http:/')/health/live")
+          echo "  plain HTTP returned $code (a redirect is expected)"
+
+          echo "Smoke test passed."
+
+  # ---------------------------------------------------------------------------
+  frontend:
+    name: Frontend → Static Web Apps
+    needs: gate
+    if: inputs.deploy_frontend != false
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.FRONTEND_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+        working-directory: frontend
+
+      - name: Compile the deployment's configuration into environment.prod.ts
+        # An Angular bundle has no runtime configuration: these values are
+        # compiled in. Writing the file here keeps the deployed URLs in the
+        # repository's variables rather than hard-coded in source.
+        working-directory: frontend
+        run: |
+          cat > src/environments/environment.prod.ts <<EOF
+          // Generated by .github/workflows/deploy-azure.yml. Do not edit.
+          export const environment = {
+            production: true,
+            apiServerUrl: '${{ vars.API_URL }}',
+            auth0: {
+              url: '${{ vars.AUTH0_DOMAIN_PREFIX }}',
+              audience: '${{ vars.AUTH0_AUDIENCE }}',
+              clientId: '${{ vars.AUTH0_CLIENT_ID }}',
+              callbackURL: '${{ vars.FRONTEND_URL }}',
+              useAuthorizationCodePkce: true,
+              tokenStorage: 'session' as 'session' | 'local',
+            },
+          };
+          EOF
+          cat src/environments/environment.prod.ts
+
+      - name: Refuse to build with an unset value
+        working-directory: frontend
+        run: |
+          if grep -qE ":\s*''" src/environments/environment.prod.ts; then
+            echo "::error::a repository variable is empty; sign-in would be broken"
+            grep -nE ":\s*''" src/environments/environment.prod.ts
+            exit 1
+          fi
+          echo "All values present."
+
+      - run: npm run build
+        working-directory: frontend
+
+      - name: Deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: frontend/www
+          skip_app_build: true
+          skip_api_build: true
+
+      - name: Reminder
+        run: |
+          echo "::notice::If ${{ vars.FRONTEND_URL }} is new, add it to the Auth0"
+          echo "::notice::application's Allowed Callback URLs, Allowed Logout URLs"
+          echo "::notice::and Allowed Web Origins, or sign-in will be refused."

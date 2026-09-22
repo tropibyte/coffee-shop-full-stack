@@ -1,0 +1,41 @@
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+exclude = '/(\.git|\.venv|venv|build|dist|migrations)/'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+known_first_party = ["src"]
+skip = [".venv", "venv", "migrations"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+# FLASK_CONFIG must be set before src.config is imported, and pytest applies
+# env before collection.  -ra surfaces the reason for every non-passing test.
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "rbac: exercises a role-based access control boundary",
+    "security: exercises a specific attack or hardening control",
+    "integration: crosses a module boundary",
+]
+filterwarnings = ["error::DeprecationWarning:src.*"]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = ["src/docs.py", "*/__init__.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv"]

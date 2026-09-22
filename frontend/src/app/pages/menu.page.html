@@ -1,0 +1,180 @@
+<div class="cs-page">
+  <div class="cs-page-header">
+    <h1>The menu</h1>
+    @if (canSeeRecipes()) {
+      <p>
+        You are signed in with <strong>get:drinks-detail</strong>, so every
+        ingredient is named below. A visitor without that permission sees the
+        same drinks with the names withheld.
+      </p>
+    } @else {
+      <p>
+        Colours and proportions are public. Ingredient names are a staff
+        matter &mdash; sign in as a barista to see them.
+      </p>
+    }
+  </div>
+
+  @if (!auth.isConfigured) {
+    <div class="cs-notice cs-notice--warn">
+      <span aria-hidden="true">⚙</span>
+      <span>
+        <strong>Auth0 is not configured yet.</strong>
+        Fill in <code>src/environments/environment.ts</code> with your tenant
+        domain prefix, API audience and SPA client id. The public menu works
+        without it; signing in does not. See
+        <code>docs/AUTH0_SETUP.md</code>.
+      </span>
+    </div>
+  }
+
+  @if (deniedPermission(); as denied) {
+    <div class="cs-notice cs-notice--warn" role="status">
+      <span aria-hidden="true">🔒</span>
+      <span>
+        That page needs the <code>{{ denied }}</code> permission, which your
+        current role does not hold.
+      </span>
+      <button class="link-button" type="button" (click)="dismissDenied()">
+        Dismiss
+      </button>
+    </div>
+  }
+
+  @if (error(); as message) {
+    <div class="cs-notice cs-notice--error" role="alert">
+      <span aria-hidden="true">⚠</span>
+      <span>{{ message }}</span>
+      <button class="link-button" type="button" (click)="dismissError()">
+        Dismiss
+      </button>
+    </div>
+  }
+
+  <div class="toolbar">
+    <div class="search">
+      <label class="cs-visually-hidden" for="menu-search">Search the menu</label>
+      <input
+        id="menu-search"
+        type="search"
+        class="search__input"
+        placeholder="Search drinks…"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="toolbar__actions">
+      <button class="chip-button" type="button" (click)="load()" [disabled]="loading()">
+        {{ loading() ? 'Refreshing…' : 'Refresh' }}
+      </button>
+
+      @if (canCreate()) {
+        <button class="chip-button chip-button--primary" type="button" (click)="startCreate()">
+          + New drink
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="grid" aria-busy="true">
+      @for (placeholder of [1, 2, 3]; track placeholder) {
+        <article class="cs-card card card--skeleton" aria-hidden="true">
+          <div class="skeleton skeleton--glass"></div>
+          <div class="skeleton skeleton--line"></div>
+          <div class="skeleton skeleton--line skeleton--short"></div>
+        </article>
+      }
+    </div>
+  } @else if (visible().length === 0) {
+    <div class="cs-empty">
+      <div class="cs-empty__icon" aria-hidden="true">☕</div>
+      @if (search()) {
+        <h2>Nothing matches “{{ search() }}”</h2>
+        <p>Try a different search, or clear the box to see the whole menu.</p>
+      } @else {
+        <h2>The menu is empty</h2>
+        <p>
+          @if (canCreate()) {
+            Add the first drink and it will appear here for everyone.
+          } @else {
+            A manager has not added any drinks yet.
+          }
+        </p>
+      }
+    </div>
+  } @else {
+    <div class="grid">
+      @for (drink of visible(); track drink.id) {
+        <article class="cs-card card">
+          <cs-drink-graphic [drink]="drink" />
+
+          <div class="card__body">
+            <h2 class="card__title">{{ drink.title }}</h2>
+
+            @if (canSeeRecipes()) {
+              <ul class="recipe">
+                <!-- Ingredients have no stable identity of their own, so the
+                     index is the honest key here. -->
+                @for (part of drink.recipe; track $index) {
+                  <li class="recipe__row">
+                    <span
+                      class="recipe__swatch"
+                      [style.background]="part.color"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="recipe__name">{{ part.name }}</span>
+                    <span class="recipe__parts"
+                      >{{ part.parts }}
+                      {{ part.parts === 1 ? 'part' : 'parts' }}</span
+                    >
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="card__locked">
+                <span aria-hidden="true">🔒</span>
+                {{ drink.recipe.length }}
+                {{ drink.recipe.length === 1 ? 'ingredient' : 'ingredients' }},
+                names hidden
+              </p>
+            }
+          </div>
+
+          @if (canManage()) {
+            <footer class="card__actions">
+              @if (canEdit()) {
+                <button class="chip-button" type="button" (click)="startEdit(drink)">
+                  Edit
+                </button>
+              }
+              @if (canDelete()) {
+                <button
+                  class="chip-button chip-button--danger"
+                  type="button"
+                  (click)="remove(drink)"
+                >
+                  Delete
+                </button>
+              }
+            </footer>
+          }
+        </article>
+      }
+    </div>
+  }
+</div>
+
+@if (draft(); as current) {
+  <cs-drink-form
+    [draft]="current"
+    (save)="save($event)"
+    (cancel)="cancelEdit()"
+  />
+}
+
+@if (toast(); as message) {
+  <div class="toast" role="status">{{ message }}</div>
+}

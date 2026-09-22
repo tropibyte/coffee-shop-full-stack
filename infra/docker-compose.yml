@@ -1,0 +1,98 @@
+# Run the whole stack locally with one command.
+#
+#   cd infra
+#   cp .env.example .env      # fill in the Auth0 values
+#   docker compose up --build
+#
+# Frontend:  http://localhost:8100
+# API:       http://localhost:5000
+# API docs:  http://localhost:5000/docs
+#
+# This mirrors the Azure deployment closely enough to be worth using as a
+# rehearsal: the API runs under gunicorn as a non-root user with production
+# configuration, and its database lives on a volume mounted at /home/data --
+# the same path Azure App Service persists.
+
+name: coffee-shop
+
+services:
+  api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    image: coffee-shop-api:local
+    container_name: coffee-shop-api
+    restart: unless-stopped
+    ports:
+      - "5000:8000"
+    environment:
+      FLASK_CONFIG: production
+      PORT: 8000
+      # --- Auth0: from infra/.env, never committed --------------------------
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN:?set AUTH0_DOMAIN in infra/.env}
+      AUTH0_API_AUDIENCE: ${AUTH0_API_AUDIENCE:?set AUTH0_API_AUDIENCE in infra/.env}
+      AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID:-}
+      MANAGEMENT_API_ENABLED: ${MANAGEMENT_API_ENABLED:-false}
+      AUTH0_M2M_CLIENT_ID: ${AUTH0_M2M_CLIENT_ID:-}
+      AUTH0_M2M_CLIENT_SECRET: ${AUTH0_M2M_CLIENT_SECRET:-}
+      # --- Application ------------------------------------------------------
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in infra/.env (32+ characters)}
+      DATABASE_URL: sqlite:////home/data/database.db
+      CORS_ORIGINS: http://localhost:8100,http://127.0.0.1:8100
+      FRONTEND_URL: http://localhost:8100
+      LOG_FORMAT: json
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DB_SEED_IF_EMPTY: "true"
+      RATELIMIT_STORAGE_URI: redis://redis:6379/0
+    volumes:
+      # Named volume, so the menu survives `docker compose down`.
+      - api-data:/home/data
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8000/health/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    security_opt:
+      - no-new-privileges:true
+
+  web:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        # The browser reaches the API on localhost:5000 here, not at the
+        # deployed URL baked into environment.prod.ts.
+        BUILD_CONFIG: development
+    image: coffee-shop-web:local
+    container_name: coffee-shop-web
+    restart: unless-stopped
+    ports:
+      - "8100:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+  # In-memory rate limiting is per-process, so two API instances would get two
+  # independent budgets.  Redis gives them one, and makes the compose stack a
+  # realistic rehearsal for scaling out.
+  redis:
+    image: redis:7-alpine
+    container_name: coffee-shop-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  api-data:

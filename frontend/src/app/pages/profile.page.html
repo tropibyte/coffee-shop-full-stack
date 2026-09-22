@@ -1,0 +1,101 @@
+<div class="cs-page">
+  <div class="cs-page-header">
+    <h1>Your access</h1>
+    <p>
+      What your access token claims, and what the API grants you on the
+      strength of it. This page is a window onto the RBAC configuration &mdash;
+      handy when something is refused and you want to know why.
+    </p>
+  </div>
+
+  <div class="summary">
+    <div class="cs-card stat">
+      <span class="stat__label">Role</span>
+      <span class="stat__value">{{ auth.roleLabel() }}</span>
+      <span class="stat__sub">rank {{ auth.rank() }}</span>
+    </div>
+
+    <div class="cs-card stat">
+      <span class="stat__label">Permissions</span>
+      <span class="stat__value">{{ heldCount() }} / {{ rows().length }}</span>
+      <span class="stat__sub">granted by Auth0</span>
+    </div>
+
+    <div class="cs-card stat">
+      <span class="stat__label">Token expires</span>
+      <span class="stat__value">{{ expiresIn() }}</span>
+      <span class="stat__sub">from now</span>
+    </div>
+
+    <div class="cs-card stat stat--wide">
+      <span class="stat__label">Subject</span>
+      <span class="stat__value stat__value--mono">{{ auth.subject() || '—' }}</span>
+      <span class="stat__sub">the Auth0 user id every audit entry names</span>
+    </div>
+  </div>
+
+  @if (rolesDisagree()) {
+    <div class="cs-notice cs-notice--warn" role="status">
+      <span aria-hidden="true">⚠</span>
+      <span>
+        <strong>Your token is out of date.</strong>
+        It claims
+        <code>{{ auth.roles().join(', ') || 'no roles' }}</code>
+        but Auth0 currently has you as
+        <code>{{ serverView()?.roles?.join(', ') || 'no roles' }}</code>.
+        A token carries the roles it was issued with; sign out and back in to
+        pick up the change.
+      </span>
+    </div>
+  }
+
+  <section class="panel cs-card">
+    <h2 class="panel__title">What you can do</h2>
+    <ul class="permissions">
+      @for (row of rows(); track row.permission) {
+        <li class="permission" [class.permission--held]="row.held">
+          <span class="permission__mark" aria-hidden="true">
+            {{ row.held ? '✓' : '✕' }}
+          </span>
+          <span class="permission__body">
+            <code class="permission__name">{{ row.permission }}</code>
+            <span class="permission__meaning">{{ row.meaning }}</span>
+          </span>
+          <span class="cs-visually-hidden">
+            {{ row.held ? 'granted' : 'not granted' }}
+          </span>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="panel cs-card">
+    <div class="panel__header">
+      <h2 class="panel__title">The token itself</h2>
+      <button class="chip-button" type="button" (click)="toggleRawClaims()">
+        {{ showRawClaims() ? 'Hide claims' : 'Show claims' }}
+      </button>
+    </div>
+
+    <div class="cs-notice cs-notice--info">
+      <span aria-hidden="true">🔎</span>
+      <span>
+        The browser <strong>decodes</strong> this token; it does not
+        <strong>verify</strong> it, because it has no trustworthy way to. Edit
+        these claims in devtools and the buttons on this site will change,
+        while the API will keep answering 403 &mdash; it checks the signature
+        against Auth0's published key on every single request.
+      </span>
+    </div>
+
+    @if (showRawClaims()) {
+      <pre class="claims">{{ rawClaims() }}</pre>
+    }
+
+    @if (serverError(); as message) {
+      <p class="panel__error">
+        Could not reach <code>/users/me</code> to cross-check: {{ message }}
+      </p>
+    }
+  </section>
+</div>

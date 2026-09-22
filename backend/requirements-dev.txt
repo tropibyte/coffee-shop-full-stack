@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# Development and CI dependencies.  Install on top of requirements.txt:
+#     pip install -r requirements.txt -r requirements-dev.txt
+# ---------------------------------------------------------------------------
+-r requirements.txt
+
+# --- Test runner -----------------------------------------------------------
+pytest==8.3.4
+pytest-cov==6.0.0
+coverage==7.6.10
+
+# --- Test doubles ----------------------------------------------------------
+responses==0.25.6        # records/replays the Auth0 JWKS + Management API
+freezegun==1.5.1         # travels through time to test token expiry
+
+# --- Style and static analysis ---------------------------------------------
+flake8==7.1.1
+pycodestyle==2.12.1
+pyflakes==3.2.0
+black==24.10.0
+isort==5.13.2
+
+# --- Security tooling ------------------------------------------------------
+bandit==1.8.2            # source-level security linter
+pip-audit==2.7.3         # dependency CVE scanner

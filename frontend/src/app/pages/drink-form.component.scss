@@ -1,0 +1,344 @@
+/* The create/edit dialog. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 16, 12, 0.55);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 50;
+  animation: fade 0.16s ease;
+}
+
+.dialog {
+  width: min(880px, 100%);
+  max-height: min(92vh, 860px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--cs-shadow-lifted);
+  animation: lift 0.2s ease;
+  overflow: hidden;
+}
+
+.dialog__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--cs-border);
+
+  h2 {
+    margin: 0;
+    font-size: 1.08rem;
+    font-weight: 680;
+    letter-spacing: -0.01em;
+  }
+}
+
+.dialog__close {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  color: var(--cs-text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 6px 9px;
+  border-radius: 7px;
+  line-height: 1;
+
+  &:hover {
+    background: var(--cs-border);
+    color: var(--cs-text);
+  }
+}
+
+.dialog__body {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 22px;
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.dialog__footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid var(--cs-border);
+  background: var(--cs-surface-raised);
+}
+
+.dialog__status {
+  margin-right: auto;
+  font-size: 0.83rem;
+  color: var(--ion-color-danger);
+  font-weight: 600;
+}
+
+/* --- Fields -------------------------------------------------------------- */
+
+.field {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.field__label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cs-text-muted);
+  margin-bottom: 7px;
+}
+
+.field__input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--cs-border-strong);
+  background: var(--cs-surface);
+  color: var(--cs-text);
+
+  &:focus {
+    border-color: var(--cs-udacity-blue);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46, 196, 241, 0.2);
+  }
+}
+
+.field__error {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.79rem;
+  color: var(--ion-color-danger);
+  font-weight: 550;
+}
+
+/* --- Ingredient rows ----------------------------------------------------- */
+
+.ingredients__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 9px;
+
+  .field__label {
+    margin-bottom: 0;
+  }
+}
+
+.ingredients__total {
+  font-size: 0.78rem;
+  color: var(--cs-text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.row {
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius-sm);
+  padding: 11px 12px;
+  margin-bottom: 9px;
+  background: var(--cs-surface-raised);
+}
+
+.row__main {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.row__name {
+  flex: 1;
+  min-width: 0;
+}
+
+.row__parts {
+  width: 74px;
+  flex: none;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.row__share {
+  width: 38px;
+  flex: none;
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--cs-text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.row__buttons {
+  display: flex;
+  gap: 3px;
+  flex: none;
+}
+
+.icon-mini {
+  width: 27px;
+  height: 27px;
+  border-radius: 6px;
+  border: 1px solid var(--cs-border-strong);
+  background: var(--cs-surface);
+  color: var(--cs-text-muted);
+  cursor: pointer;
+  font-size: 0.78rem;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+
+  &:hover:not(:disabled) {
+    background: var(--cs-border);
+    color: var(--cs-text);
+  }
+
+  &:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+  }
+}
+
+.icon-mini--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ion-color-danger) 15%, transparent);
+  color: var(--ion-color-danger);
+}
+
+.row__colour {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  flex-wrap: wrap;
+}
+
+.row__picker {
+  width: 34px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--cs-border-strong);
+  border-radius: 7px;
+  background: var(--cs-surface);
+  cursor: pointer;
+  flex: none;
+}
+
+.row__hex {
+  width: 108px;
+  flex: none;
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.82rem;
+}
+
+.swatches {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.swatches__dot {
+  width: 19px;
+  height: 19px;
+  border-radius: 5px;
+  border: 1px solid var(--cs-border-strong);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:hover {
+    transform: scale(1.14);
+  }
+}
+
+.swatches__dot--on {
+  box-shadow: 0 0 0 2px var(--cs-udacity-blue);
+}
+
+.add-row {
+  width: 100%;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: var(--cs-radius-sm);
+  border: 1px dashed var(--cs-border-strong);
+  background: transparent;
+  color: var(--cs-text-muted);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--cs-border);
+    color: var(--cs-text);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.add-row__hint {
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 5px;
+}
+
+/* --- Preview ------------------------------------------------------------- */
+
+.preview {
+  border-left: 1px solid var(--cs-border);
+  padding-left: 20px;
+  position: sticky;
+  top: 0;
+  align-self: start;
+}
+
+.preview__note {
+  margin: 14px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--cs-text-faint);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes lift {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+}
+
+@media (max-width: 720px) {
+  .dialog__body {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .preview {
+    border-left: 0;
+    border-top: 1px solid var(--cs-border);
+    padding-left: 0;
+    padding-top: 18px;
+    position: static;
+  }
+
+  .row__main {
+    flex-wrap: wrap;
+  }
+
+  .row__name {
+    flex: 1 1 100%;
+  }
+}

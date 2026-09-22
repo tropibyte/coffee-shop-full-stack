@@ -1,0 +1,79 @@
+# Render Blueprint.
+#
+#   Dashboard -> New -> Blueprint -> connect this repository
+#
+# Then set AUTH0_DOMAIN and AUTH0_API_AUDIENCE in the dashboard; the rest is
+# below. See docs/DEPLOYMENT.md for the caveat about free-tier storage.
+
+services:
+  - type: web
+    name: coffee-shop-api
+    runtime: python
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: >-
+      gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 60
+      --access-logfile - --error-logfile - wsgi:app
+    healthCheckPath: /health/ready
+    envVars:
+      - key: FLASK_CONFIG
+        value: production
+      - key: PYTHON_VERSION
+        value: "3.12"
+      # Render generates this and keeps it out of the repository.
+      - key: SECRET_KEY
+        generateValue: true
+      # Set these two in the dashboard.
+      - key: AUTH0_DOMAIN
+        sync: false
+      - key: AUTH0_API_AUDIENCE
+        sync: false
+      - key: AUTH0_M2M_CLIENT_ID
+        sync: false
+      - key: AUTH0_M2M_CLIENT_SECRET
+        sync: false
+      - key: MANAGEMENT_API_ENABLED
+        value: "false"
+      - key: LOG_FORMAT
+        value: json
+      # A free instance has an ephemeral filesystem and sleeps after 15
+      # minutes, so the database resets. Seeding on an empty table means the
+      # menu comes back rather than the demo looking broken. Anything a
+      # reviewer added is still lost -- attach a disk, or use Postgres.
+      - key: DB_SEED_IF_EMPTY
+        value: "true"
+      - key: CORS_ORIGINS
+        fromService:
+          name: coffee-shop-web
+          type: web
+          property: hostport
+      - key: FRONTEND_URL
+        fromService:
+          name: coffee-shop-web
+          type: web
+          property: hostport
+
+  - type: web
+    name: coffee-shop-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./www
+    # A single-page application owns its routing: any unknown path must fall
+    # through to index.html or a refresh on /diagnostics is a 404.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer

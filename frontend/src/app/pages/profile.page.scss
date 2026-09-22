@@ -1,0 +1,158 @@
+/* "Your access": summary tiles, permission list and raw claims. */
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 13px;
+  margin-bottom: 22px;
+}
+
+.stat {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stat--wide {
+  grid-column: 1 / -1;
+}
+
+.stat__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cs-text-faint);
+}
+
+.stat__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--cs-text);
+  letter-spacing: -0.02em;
+  word-break: break-word;
+}
+
+.stat__value--mono {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.stat__sub {
+  font-size: 0.78rem;
+  color: var(--cs-text-faint);
+}
+
+/* --- Panels -------------------------------------------------------------- */
+
+.panel {
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.panel__title {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  font-weight: 680;
+}
+
+.panel__header .panel__title {
+  margin: 0;
+}
+
+.panel__error {
+  margin: 12px 0 0;
+  font-size: 0.83rem;
+  color: var(--ion-color-danger);
+}
+
+/* --- Permission list ----------------------------------------------------- */
+
+.permissions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+  gap: 8px;
+}
+
+.permission {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: var(--cs-radius-sm);
+  border: 1px solid var(--cs-border);
+  background: var(--cs-surface-raised);
+  opacity: 0.58;
+}
+
+.permission--held {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--ion-color-success) 42%, transparent);
+  background: color-mix(in srgb, var(--ion-color-success) 8%, var(--cs-surface));
+}
+
+.permission__mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex: none;
+  background: var(--cs-border);
+  color: var(--cs-text-faint);
+}
+
+.permission--held .permission__mark {
+  background: var(--ion-color-success);
+  color: var(--ion-color-success-contrast);
+}
+
+.permission__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.permission__name {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.81rem;
+  font-weight: 650;
+  color: var(--cs-text);
+}
+
+.permission__meaning {
+  font-size: 0.77rem;
+  color: var(--cs-text-faint);
+}
+
+/* --- Raw claims ---------------------------------------------------------- */
+
+.claims {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  background: rgba(43, 26, 18, 0.07);
+  border-radius: 9px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  font-family: ui-monospace, Consolas, monospace;
+  max-height: 380px;
+  overflow-y: auto;
+}

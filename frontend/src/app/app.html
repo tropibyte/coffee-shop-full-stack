@@ -1,0 +1,153 @@
+<ion-app>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="brand" routerLink="/menu" (click)="closeNav()">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <path
+              d="M4 8h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z"
+              fill="currentColor"
+              opacity="0.9"
+            />
+            <path
+              d="M16 9h2.2a2.8 2.8 0 0 1 0 5.6H16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+            <path
+              d="M8 2.5c0 1.2 1.2 1.6 1.2 2.8M11.6 2.5c0 1.2 1.2 1.6 1.2 2.8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              opacity="0.65"
+            />
+          </svg>
+        </span>
+        <span class="brand__text">
+          <strong>Coffee Shop</strong>
+          <small>Udacity campus cafe</small>
+        </span>
+      </a>
+
+      <button
+        class="topbar__burger"
+        type="button"
+        (click)="toggleNav()"
+        [attr.aria-expanded]="navOpen()"
+        aria-controls="primary-nav"
+        aria-label="Toggle navigation"
+      >
+        <span aria-hidden="true">{{ navOpen() ? '✕' : '☰' }}</span>
+      </button>
+
+      <nav id="primary-nav" class="nav" [class.nav--open]="navOpen()">
+        <a
+          routerLink="/menu"
+          routerLinkActive="nav__link--active"
+          class="nav__link"
+          (click)="closeNav()"
+          >Menu</a
+        >
+
+        @if (auth.can('get:users')) {
+          <a
+            routerLink="/people"
+            routerLinkActive="nav__link--active"
+            class="nav__link"
+            (click)="closeNav()"
+            >People</a
+          >
+        }
+
+        @if (auth.can('get:audit')) {
+          <a
+            routerLink="/audit"
+            routerLinkActive="nav__link--active"
+            class="nav__link"
+            (click)="closeNav()"
+            >Audit</a
+          >
+        }
+
+        @if (auth.isAuthenticated()) {
+          <a
+            routerLink="/profile"
+            routerLinkActive="nav__link--active"
+            class="nav__link"
+            (click)="closeNav()"
+            >Your access</a
+          >
+        }
+
+        <a
+          routerLink="/diagnostics"
+          routerLinkActive="nav__link--active"
+          class="nav__link nav__link--quiet"
+          (click)="closeNav()"
+          >Diagnostics</a
+        >
+      </nav>
+
+      <div class="topbar__actions">
+        <button
+          class="icon-button"
+          type="button"
+          (click)="theme.toggle()"
+          [attr.aria-label]="
+            theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'
+          "
+          [title]="theme.isDark() ? 'Light theme' : 'Dark theme'"
+        >
+          <span aria-hidden="true">{{ theme.isDark() ? '☀' : '☾' }}</span>
+        </button>
+
+        <span [class]="badgeClass()" title="Your role, as claimed by your token">
+          {{ auth.roleLabel() }}
+        </span>
+
+        @if (auth.isAuthenticated()) {
+          <button class="button button--ghost" type="button" (click)="signOut()">
+            Sign out
+          </button>
+        } @else {
+          <button class="button button--primary" type="button" (click)="signIn()">
+            Sign in
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  @if (auth.failure(); as failure) {
+    <div class="cs-page" role="alert">
+      <div class="cs-notice cs-notice--error">
+        <span aria-hidden="true">⚠</span>
+        <span>
+          <strong>Sign-in failed ({{ failure.error }}).</strong>
+          {{ failure.description }}
+        </span>
+      </div>
+    </div>
+  }
+
+  @if (auth.exchanging()) {
+    <div class="cs-page">
+      <div class="cs-notice cs-notice--info">
+        <span aria-hidden="true">⏳</span>
+        <span>Completing sign-in…</span>
+      </div>
+    </div>
+  }
+
+  <main class="shell">
+    <!--
+      A plain router-outlet, not ion-router-outlet: this shell is a custom
+      header over ordinary pages rather than an Ionic navigation stack, and
+      ion-router-outlet's transition machinery would fight the layout for a
+      stacked-page animation the app never uses.
+    -->
+    <router-outlet />
+  </main>
+</ion-app>

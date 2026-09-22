@@ -1,0 +1,266 @@
+<div class="cs-page">
+  <div class="cs-page-header">
+    <h1>People</h1>
+    <p>
+      Accounts junior to yours, live from Auth0. You are
+      <strong>{{ auth.roleLabel() }}</strong
+      >, so you can see and administer
+      @if (auth.rank() >= 2) {
+        managers and baristas &mdash; but never another administrator, and
+        never yourself.
+      } @else {
+        baristas only &mdash; not other managers, not administrators, and not
+        yourself.
+      }
+    </p>
+  </div>
+
+  @if (error(); as message) {
+    <div class="cs-notice cs-notice--error" role="alert">
+      <span aria-hidden="true">⚠</span>
+      <span>{{ message }}</span>
+      <button class="link-button" type="button" (click)="dismissError()">Dismiss</button>
+    </div>
+  }
+
+  @if (notice(); as message) {
+    <div class="cs-notice cs-notice--info" role="status">
+      <span aria-hidden="true">✓</span>
+      <span>{{ message }}</span>
+      <button class="link-button" type="button" (click)="dismissNotice()">Dismiss</button>
+    </div>
+  }
+
+  @if (setupUrl(); as url) {
+    <div class="cs-notice cs-notice--info setup" role="status">
+      <span aria-hidden="true">🔑</span>
+      <div class="setup__body">
+        <strong>Send this one-time link to {{ setupEmail() }}.</strong>
+        <p class="setup__note">
+          No password was created, transmitted or stored by this application.
+          The link lets them set their own, and it expires.
+        </p>
+        <code class="setup__url">{{ url }}</code>
+        <div class="setup__actions">
+          <button class="chip-button" type="button" (click)="copySetupUrl()">
+            {{ copied() ? 'Copied' : 'Copy link' }}
+          </button>
+          <button class="chip-button" type="button" (click)="dismissSetupUrl()">
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="toolbar">
+    <div class="search">
+      <label class="cs-visually-hidden" for="people-search">Search people</label>
+      <input
+        id="people-search"
+        type="search"
+        class="search__input"
+        placeholder="Search by email, name or role…"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="toolbar__actions">
+      <button class="chip-button" type="button" (click)="load()" [disabled]="loading()">
+        {{ loading() ? 'Refreshing…' : 'Refresh' }}
+      </button>
+      @if (canInvite()) {
+        <button class="chip-button chip-button--primary" type="button" (click)="openInvite()">
+          + Invite someone
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (inviteOpen()) {
+    <section class="cs-card invite">
+      <h2 class="invite__title">Invite a new team member</h2>
+
+      <div class="invite__fields">
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input
+            type="email"
+            class="field__input"
+            [ngModel]="inviteEmail()"
+            (ngModelChange)="inviteEmail.set($event)"
+            placeholder="new.barista@example.com"
+            autocomplete="off"
+          />
+          @if (inviteEmail() && !inviteEmailValid()) {
+            <span class="field__error">That does not look like an email address.</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">Name <span class="field__optional">(optional)</span></span>
+          <input
+            type="text"
+            class="field__input"
+            [ngModel]="inviteName()"
+            (ngModelChange)="inviteName.set($event)"
+            placeholder="Bea Barista"
+            autocomplete="off"
+          />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Role</span>
+          <select
+            class="field__input"
+            [ngModel]="inviteRole()"
+            (ngModelChange)="inviteRole.set($event)"
+          >
+            @for (role of roles(); track role.id) {
+              <option [value]="role.name">{{ role.name }}</option>
+            }
+          </select>
+          @if (roles().length === 0) {
+            <span class="field__error">
+              No assignable roles. Either the tenant has none defined, or your
+              own role does not outrank any of them.
+            </span>
+          }
+        </label>
+      </div>
+
+      <div class="invite__actions">
+        <button class="chip-button" type="button" (click)="closeInvite()">Cancel</button>
+        <button
+          class="chip-button chip-button--primary"
+          type="button"
+          (click)="invite()"
+          [disabled]="!inviteValid() || inviteBusy()"
+        >
+          {{ inviteBusy() ? 'Inviting…' : 'Send invitation' }}
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (loading()) {
+    <p class="loading" aria-busy="true">Loading people from Auth0…</p>
+  } @else if (visible().length === 0) {
+    <div class="cs-empty">
+      <div class="cs-empty__icon" aria-hidden="true">👥</div>
+      @if (search()) {
+        <h2>Nobody matches “{{ search() }}”</h2>
+        <p>Try a different search term.</p>
+      } @else {
+        <h2>No one to show</h2>
+        <p>
+          There are no accounts junior to yours in this tenant yet. Invite
+          someone to get started.
+        </p>
+      }
+    </div>
+  } @else {
+    <div class="table-wrap cs-card">
+      <table class="table">
+        <caption class="cs-visually-hidden">
+          Accounts you are permitted to administer
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Person</th>
+            <th scope="col">Role</th>
+            <th scope="col">Status</th>
+            <th scope="col">Last seen</th>
+            <th scope="col"><span class="cs-visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of visible(); track user.user_id) {
+            <tr [class.row--busy]="busyUser() === user.user_id">
+              <th scope="row" class="cell-person">
+                <span class="person">
+                  <span class="person__name">{{ user.name || user.email }}</span>
+                  @if (user.name) {
+                    <span class="person__email">{{ user.email }}</span>
+                  }
+                </span>
+              </th>
+
+              <td>
+                @if (canEdit() && roles().length) {
+                  <select
+                    class="role-select"
+                    [ngModel]="user.roles[0] || ''"
+                    (ngModelChange)="changeRole(user, $event)"
+                    [disabled]="busyUser() === user.user_id"
+                    [attr.aria-label]="'Role for ' + user.email"
+                  >
+                    @if (!user.roles.length) {
+                      <option value="" disabled>No role</option>
+                    }
+                    @for (role of roles(); track role.id) {
+                      <option [value]="role.name">{{ role.name }}</option>
+                    }
+                  </select>
+                } @else {
+                  <span [class]="badgeClass(user)">
+                    {{ user.roles.join(', ') || 'No role' }}
+                  </span>
+                }
+              </td>
+
+              <td>
+                @if (user.blocked) {
+                  <span class="status status--blocked">Blocked</span>
+                } @else if (!user.email_verified) {
+                  <span class="status status--pending">Unverified</span>
+                } @else {
+                  <span class="status status--active">Active</span>
+                }
+              </td>
+
+              <td class="cell-muted">
+                {{ user.last_login ? (user.last_login | date: 'd MMM y') : 'Never' }}
+                <span class="cell-sub"
+                  >{{ user.logins_count }}
+                  {{ user.logins_count === 1 ? 'sign-in' : 'sign-ins' }}</span
+                >
+              </td>
+
+              <td class="cell-actions">
+                @if (canEdit()) {
+                  <button
+                    class="chip-button"
+                    type="button"
+                    (click)="toggleBlocked(user)"
+                    [disabled]="busyUser() === user.user_id"
+                  >
+                    {{ user.blocked ? 'Unblock' : 'Block' }}
+                  </button>
+                }
+                @if (canRemove()) {
+                  <button
+                    class="chip-button chip-button--danger"
+                    type="button"
+                    (click)="remove(user)"
+                    [disabled]="busyUser() === user.user_id"
+                  >
+                    Delete
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <p class="footnote">
+      Showing {{ visible().length }} of {{ users().length }} visible
+      {{ users().length === 1 ? 'account' : 'accounts' }}. Accounts at or above
+      your own rank are filtered out by the API, not merely hidden here.
+    </p>
+  }
+</div>

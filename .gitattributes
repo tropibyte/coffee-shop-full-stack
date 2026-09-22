@@ -1,0 +1,27 @@
+# Normalise line endings.
+#
+# Checked in as LF, checked out as LF everywhere.  Windows editors handle LF
+# fine, and CRLF in a file that a Linux container executes -- a shell script,
+# a Dockerfile CMD, an entrypoint -- produces the memorable
+# "exec: not found" / "\r: command not found" failure.
+* text=auto eol=lf
+
+# Files that must keep CRLF to work on Windows.
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
+# Never touched.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.zip  binary
+*.pdf  binary
+
+# Keep generated files out of diffs and language statistics.
+package-lock.json  linguist-generated=true -diff
+*.postman_collection.json  linguist-generated=true

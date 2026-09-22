@@ -1,0 +1,183 @@
+<div class="backdrop" (click)="close()" (keydown)="onKeydown($event)" tabindex="-1">
+  <div
+    class="dialog cs-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drink-form-heading"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="dialog__header">
+      <h2 id="drink-form-heading">
+        {{ isNew() ? 'New drink' : 'Edit drink' }}
+      </h2>
+      <button
+        class="dialog__close"
+        type="button"
+        (click)="close()"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">✕</span>
+      </button>
+    </header>
+
+    <div class="dialog__body">
+      <div class="editor">
+        <label class="field">
+          <span class="field__label">Title</span>
+          <input
+            #titleInput
+            type="text"
+            class="field__input"
+            [ngModel]="title()"
+            (ngModelChange)="title.set($event)"
+            maxlength="80"
+            placeholder="Udaci-Spice Latte"
+            autocomplete="off"
+          />
+          @if (submitted() && titleError(); as error) {
+            <span class="field__error">{{ error }}</span>
+          }
+        </label>
+
+        <div class="ingredients">
+          <div class="ingredients__header">
+            <span class="field__label">Ingredients</span>
+            <span class="ingredients__total">
+              {{ totalParts() }} {{ totalParts() === 1 ? 'part' : 'parts' }} total
+            </span>
+          </div>
+
+          @for (row of recipe(); track $index) {
+            <div class="row">
+              <div class="row__main">
+                <input
+                  type="text"
+                  class="field__input row__name"
+                  [ngModel]="row.name"
+                  (ngModelChange)="updateField($index, 'name', $event)"
+                  placeholder="blue foam"
+                  maxlength="60"
+                  [attr.aria-label]="'Ingredient ' + ($index + 1) + ' name'"
+                  autocomplete="off"
+                />
+
+                <input
+                  type="number"
+                  class="field__input row__parts"
+                  [ngModel]="row.parts"
+                  (ngModelChange)="updateField($index, 'parts', $event)"
+                  min="0.5"
+                  max="1000"
+                  step="0.5"
+                  [attr.aria-label]="'Ingredient ' + ($index + 1) + ' parts'"
+                />
+
+                <span class="row__share" aria-hidden="true">{{ shareOf($index) }}%</span>
+
+                <div class="row__buttons">
+                  <button
+                    type="button"
+                    class="icon-mini"
+                    (click)="moveIngredient($index, -1)"
+                    [disabled]="$index === 0"
+                    [attr.aria-label]="'Move ingredient ' + ($index + 1) + ' up'"
+                  >
+                    <span aria-hidden="true">↑</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-mini"
+                    (click)="moveIngredient($index, 1)"
+                    [disabled]="$index === recipe().length - 1"
+                    [attr.aria-label]="'Move ingredient ' + ($index + 1) + ' down'"
+                  >
+                    <span aria-hidden="true">↓</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-mini icon-mini--danger"
+                    (click)="removeIngredient($index)"
+                    [disabled]="recipe().length === 1"
+                    [attr.aria-label]="'Remove ingredient ' + ($index + 1)"
+                  >
+                    <span aria-hidden="true">✕</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="row__colour">
+                <input
+                  type="color"
+                  class="row__picker"
+                  [value]="row.color.startsWith('#') ? row.color : '#cccccc'"
+                  (input)="updateField($index, 'color', $any($event.target).value)"
+                  [attr.aria-label]="'Ingredient ' + ($index + 1) + ' colour picker'"
+                />
+                <input
+                  type="text"
+                  class="field__input row__hex"
+                  [ngModel]="row.color"
+                  (ngModelChange)="updateField($index, 'color', $event)"
+                  placeholder="#2ec4f1"
+                  [attr.aria-label]="'Ingredient ' + ($index + 1) + ' colour value'"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <div class="swatches">
+                  @for (swatch of swatches; track swatch) {
+                    <button
+                      type="button"
+                      class="swatches__dot"
+                      [style.background]="swatch"
+                      [class.swatches__dot--on]="row.color.toLowerCase() === swatch"
+                      (click)="updateField($index, 'color', swatch)"
+                      [attr.aria-label]="'Use colour ' + swatch"
+                      [attr.title]="swatch"
+                    ></button>
+                  }
+                </div>
+              </div>
+
+              @if (submitted() && recipeErrors()[$index]; as error) {
+                <span class="field__error">{{ error }}</span>
+              }
+            </div>
+          }
+
+          <button
+            type="button"
+            class="add-row"
+            (click)="addIngredient()"
+            [disabled]="recipe().length >= 20"
+          >
+            + Add ingredient
+            @if (recipe().length >= 20) {
+              <span class="add-row__hint">(20 is the limit)</span>
+            }
+          </button>
+        </div>
+      </div>
+
+      <aside class="preview">
+        <span class="field__label">Preview</span>
+        <cs-drink-graphic [drink]="preview()" />
+        <p class="preview__note">
+          Proportions update as you type. This is exactly what a visitor sees,
+          minus the ingredient names.
+        </p>
+      </aside>
+    </div>
+
+    <footer class="dialog__footer">
+      @if (submitted() && !isValid()) {
+        <span class="dialog__status" role="alert">
+          Fix the highlighted fields before saving.
+        </span>
+      }
+      <button type="button" class="chip-button" (click)="close()">Cancel</button>
+      <button type="button" class="chip-button chip-button--primary" (click)="submit()">
+        {{ isNew() ? 'Add to menu' : 'Save changes' }}
+      </button>
+    </footer>
+  </div>
+</div>

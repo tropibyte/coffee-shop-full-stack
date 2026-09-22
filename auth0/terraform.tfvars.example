@@ -1,0 +1,20 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored.
+#
+# The secret is deliberately absent: supply it through the environment so it
+# never reaches a file or your shell history.
+#
+#   $env:TF_VAR_terraform_client_secret = "..."     # PowerShell
+#   read -rs TF_VAR_terraform_client_secret; export TF_VAR_terraform_client_secret
+
+auth0_domain        = "your-tenant.us.auth0.com"
+terraform_client_id = "the bootstrap M2M application's client id"
+
+api_audience = "coffee-shop"
+
+allowed_origins = [
+  "http://localhost:8100",
+  "http://127.0.0.1:8100",
+  # Add your deployed frontend origin here once Azure has assigned one.
+]
+
+enable_google_login = true

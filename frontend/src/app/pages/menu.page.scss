@@ -1,0 +1,206 @@
+/* The menu grid, its cards, and the shared small-control vocabulary. */
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.search {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.search__input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.92rem;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--cs-border);
+  background: var(--cs-surface);
+  color: var(--cs-text);
+
+  &::placeholder {
+    color: var(--cs-text-faint);
+  }
+
+  &:focus {
+    border-color: var(--cs-udacity-blue);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46, 196, 241, 0.2);
+  }
+}
+
+.toolbar__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* --- Grid ---------------------------------------------------------------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 18px 16px;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--cs-shadow-lifted);
+  }
+}
+
+.card__body {
+  margin-top: 14px;
+  flex: 1;
+}
+
+.card__title {
+  font-size: 1.04rem;
+  font-weight: 680;
+  margin: 0 0 10px;
+  text-align: center;
+  color: var(--cs-text);
+  letter-spacing: -0.01em;
+}
+
+.card__locked {
+  margin: 0;
+  text-align: center;
+  font-size: 0.83rem;
+  color: var(--cs-text-faint);
+}
+
+.card__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--cs-border);
+}
+
+/* --- Recipe list --------------------------------------------------------- */
+
+.recipe {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.recipe__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.recipe__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--cs-border-strong);
+  flex: none;
+}
+
+.recipe__name {
+  flex: 1;
+  color: var(--cs-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipe__parts {
+  color: var(--cs-text-faint);
+  font-size: 0.79rem;
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+/* --- Loading placeholders ------------------------------------------------ */
+
+.card--skeleton:hover {
+  transform: none;
+  box-shadow: var(--cs-shadow);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--cs-border) 25%,
+    color-mix(in srgb, var(--cs-border) 45%, transparent) 50%,
+    var(--cs-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+}
+
+.skeleton--glass {
+  height: 150px;
+  width: 110px;
+  margin: 0 auto 16px;
+  border-radius: 10px;
+}
+
+.skeleton--line {
+  height: 12px;
+  margin: 0 auto 9px;
+  width: 78%;
+}
+
+.skeleton--short {
+  width: 48%;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* --- Toast --------------------------------------------------------------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  background: var(--cs-espresso);
+  color: var(--cs-foam);
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 550;
+  box-shadow: var(--cs-shadow-lifted);
+  z-index: 40;
+  animation: rise 0.22s ease;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

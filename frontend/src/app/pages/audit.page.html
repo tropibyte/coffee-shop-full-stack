@@ -1,0 +1,131 @@
+<div class="cs-page">
+  <div class="cs-page-header">
+    <h1>Audit trail</h1>
+    <p>
+      Every state-changing and privileged request, newest first. Role-based
+      access control decides what <em>may</em> happen; this is the record of
+      what <em>did</em>. Each entry is also written to the structured log, so
+      it survives a problem with this table.
+    </p>
+  </div>
+
+  @if (error(); as message) {
+    <div class="cs-notice cs-notice--error" role="alert">
+      <span aria-hidden="true">⚠</span>
+      <span>{{ message }}</span>
+      <button class="link-button" type="button" (click)="dismissError()">Dismiss</button>
+    </div>
+  }
+
+  <div class="toolbar">
+    <div class="filters">
+      <button
+        class="filter"
+        type="button"
+        [class.filter--on]="filter() === ''"
+        (click)="filter.set('')"
+      >
+        All ({{ events().length }})
+      </button>
+      @for (action of actions(); track action) {
+        <button
+          class="filter"
+          type="button"
+          [class.filter--on]="filter() === action"
+          (click)="filter.set(action)"
+        >
+          {{ action }}
+        </button>
+      }
+    </div>
+
+    <button class="chip-button" type="button" (click)="load()" [disabled]="loading()">
+      {{ loading() ? 'Refreshing…' : 'Refresh' }}
+    </button>
+  </div>
+
+  @if (loading()) {
+    <p class="loading" aria-busy="true">Loading the audit trail…</p>
+  } @else if (visible().length === 0) {
+    <div class="cs-empty">
+      <div class="cs-empty__icon" aria-hidden="true">📋</div>
+      <h2>Nothing recorded yet</h2>
+      <p>
+        Add, edit or remove a drink and it will appear here with the account
+        that did it and the permission that allowed it.
+      </p>
+    </div>
+  } @else {
+    <ol class="timeline">
+      @for (event of visible(); track event.id) {
+        <li class="event cs-card" [class]="toneFor(event.action)">
+          <button
+            class="event__summary"
+            type="button"
+            (click)="toggle(event.id)"
+            [attr.aria-expanded]="expanded() === event.id"
+          >
+            <span class="event__icon" aria-hidden="true">{{ iconFor(event.action) }}</span>
+
+            <span class="event__main">
+              <span class="event__action">{{ event.action }}</span>
+              <span class="event__meta">
+                <span class="event__actor" [title]="event.actor_sub">
+                  {{ shortSub(event.actor_sub) }}
+                </span>
+                @if (event.permission) {
+                  <span class="event__permission">{{ event.permission }}</span>
+                }
+                @if (event.resource_id) {
+                  <span class="event__resource"
+                    >{{ event.resource_type }} #{{ event.resource_id }}</span
+                  >
+                }
+              </span>
+            </span>
+
+            <span class="event__when">
+              {{ event.occurred_at | date: 'd MMM, HH:mm:ss' }}
+            </span>
+
+            <span class="event__chevron" aria-hidden="true">
+              {{ expanded() === event.id ? '▾' : '▸' }}
+            </span>
+          </button>
+
+          @if (expanded() === event.id) {
+            <div class="event__detail">
+              <dl class="detail-grid">
+                <dt>Occurred</dt>
+                <dd>{{ event.occurred_at }}</dd>
+
+                <dt>Actor</dt>
+                <dd class="mono">{{ event.actor_sub }}</dd>
+
+                <dt>Permission</dt>
+                <dd class="mono">{{ event.permission || '—' }}</dd>
+
+                <dt>Status</dt>
+                <dd>{{ event.status_code || '—' }}</dd>
+
+                <dt>Request id</dt>
+                <dd class="mono">{{ event.request_id || '—' }}</dd>
+              </dl>
+
+              @if (event.detail) {
+                <div class="detail-blob">
+                  <span class="detail-blob__label">Detail</span>
+                  <pre>{{ prettyDetail(event) }}</pre>
+                  <p class="detail-blob__note">
+                    Secrets are stripped before storage, so no token or
+                    password can appear here.
+                  </p>
+                </div>
+              }
+            </div>
+          }
+        </li>
+      }
+    </ol>
+  }
+</div>
