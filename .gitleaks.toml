@@ -1,0 +1,34 @@
+# gitleaks configuration.
+#
+# The default rule set, plus one narrow allowlist.
+#
+# `useDefault = true` keeps every built-in rule, including the `jwt` rule that
+# correctly stopped a set of live Auth0 tokens from being committed here. The
+# allowlist below does not weaken it: it names one specific, deliberately
+# invalid token by the base64 of its own header.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = """
+The security folder of the Postman collection carries a deliberately forged
+JWT, so the collection can prove unattended that a token naming an
+unpublished key id is refused. Decoded, it reads:
+
+  header    {"alg":"RS256","typ":"JWT","kid":"no-such-key-id"}
+  payload   {"iss":"https://example.auth0.com/","sub":"auth0|forged", ...}
+  signature not-a-real-signature
+
+It is not a credential and never was. It is matched here by the base64 of its
+header, which encodes the literal kid "no-such-key-id" -- a real token from
+any tenant carries a real key id and will not match, so this allowlist cannot
+hide one.
+"""
+
+regexes = [
+  # base64url of {"alg":"RS256","typ":"JWT","kid":"no-such-key-id"}
+  '''eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im5vLXN1Y2gta2V5LWlkIn0''',
+  # base64url of the literal string "not-a-real-signature"
+  '''bm90LWEtcmVhbC1zaWduYXR1cmU''',
+]
