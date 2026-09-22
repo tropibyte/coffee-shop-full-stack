@@ -82,6 +82,14 @@ def script(lines: List[str]) -> Dict[str, Any]:
     }
 
 
+def prerequest(lines: List[str]) -> Dict[str, Any]:
+    """Wrap pre-request script lines in Postman's event envelope."""
+    return {
+        "listen": "prerequest",
+        "script": {"id": str(uuid.uuid4()), "type": "text/javascript", "exec": lines},
+    }
+
+
 def request(
     name: str,
     method: str,
@@ -89,29 +97,37 @@ def request(
     tests: List[str],
     body: Optional[Dict[str, Any]] = None,
     description: str = "",
+    headers: Optional[List[Dict[str, str]]] = None,
+    before: Optional[List[str]] = None,
+    raw_body: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Build one Postman request item."""
     raw_url = "{{host}}" + path
     segments = [segment for segment in path.split("/") if segment]
 
+    events: List[Dict[str, Any]] = []
+    if before:
+        events.append(prerequest(before))
+    events.append(script(tests))
+
     item: Dict[str, Any] = {
         "name": name,
-        "event": [script(tests)],
+        "event": events,
         "request": {
             "method": method,
-            "header": [],
+            "header": list(headers or []),
             "url": {"raw": raw_url, "host": ["{{host}}"], "path": segments},
             "description": description,
         },
         "response": [],
     }
-    if body is not None:
+    if body is not None or raw_body is not None:
         item["request"]["header"].append(
             {"key": "Content-Type", "value": "application/json"}
         )
         item["request"]["body"] = {
             "mode": "raw",
-            "raw": json.dumps(body, indent=2),
+            "raw": raw_body if raw_body is not None else json.dumps(body, indent=2),
             "options": {"raw": {"language": "json"}},
         }
     return item
@@ -217,6 +233,46 @@ NEW_DRINK = {
         {"name": "steamed milk", "color": "#f4e6cd", "parts": 3},
     ],
 }
+
+#: The manager folder posts under a title made unique per run.
+#:
+#: Titles are unique in the database, and the demo seed already contains an
+#: "Udaci-Spice Latte" -- so a fixed title makes the very first create return
+#: 409, `drink_id` never gets captured, and every later request in the folder
+#: fails against a drink that was never made.  A run-scoped suffix keeps the
+#: recognisable name while letting the folder run any number of times.
+MINT_PROBE_TITLE = [
+    "// Unique per run: the seeded menu already has an Udaci-Spice Latte,",
+    "// and titles are unique. Without this the create 409s and the rest of",
+    "// this folder collapses against a drink that never existed.",
+    "pm.collectionVariables.set(",
+    "    'probe_title',",
+    "    'Udaci-Spice Latte ' + Date.now()",
+    ");",
+]
+
+RENAME_BODY = """{
+  "title": "{{probe_title}} v2"
+}"""
+
+PROBE_BODY = """{
+  "title": "{{probe_title}}",
+  "recipe": [
+    { "name": "blue foam", "color": "#2ec4f1", "parts": 1 },
+    { "name": "espresso", "color": "#4b2e1e", "parts": 2 },
+    { "name": "steamed milk", "color": "#f4e6cd", "parts": 3 }
+  ]
+}"""
+
+#: A structurally valid JWT naming a key id the tenant does not publish.
+#: Self-contained, so the security folder needs nothing pasted into it.
+FORGED_KID_TOKEN = (
+    "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im5vLXN1Y2gta2V5LWlkIn0"
+    ".eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfGZv"
+    "cmdlZCIsImF1ZCI6ImNvZmZlZS1zaG9wIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQx"
+    "MDI0NDQ4MDAsInBlcm1pc3Npb25zIjpbImRlbGV0ZTpkcmlua3MiXX0"
+    ".bm90LWEtcmVhbC1zaWduYXR1cmU"
+)
 
 
 # ---------------------------------------------------------------------------
@@ -391,12 +447,14 @@ def manager_folder() -> Dict[str, Any]:
                 + [
                     'pm.test("returns the long form of the new drink", function () {',
                     "    var drink = pm.response.json().drinks[0];",
-                    "    pm.expect(drink.title).to.eql('Udaci-Spice Latte');",
+                    "    pm.expect(drink.title).to.eql(",
+                    "        pm.collectionVariables.get('probe_title'));",
                     "    pm.expect(drink.recipe.length).to.eql(3);",
                     "    pm.expect(drink.recipe[0]).to.have.property('name');",
                     "});",
                 ],
-                body=NEW_DRINK,
+                raw_body=PROBE_BODY,
+                before=MINT_PROBE_TITLE,
                 description=(
                     "Creates the drink the rest of this folder edits and deletes, "
                     "so the folder leaves no residue and can be re-run."
@@ -407,8 +465,12 @@ def manager_folder() -> Dict[str, Any]:
                 "POST",
                 "/drinks",
                 [STATUS.format(409)] + error_body(409),
-                body=NEW_DRINK,
-                description="A unique constraint, reported as a conflict.",
+                raw_body=PROBE_BODY,
+                description=(
+                    "Re-posts the title the previous request just created, so "
+                    "the conflict is real rather than a collision with seed "
+                    "data."
+                ),
             ),
             request(
                 "/drinks (invalid recipe)",
@@ -430,11 +492,11 @@ def manager_folder() -> Dict[str, Any]:
                 + DRINKS_ARRAY
                 + [
                     'pm.test("the title was updated", function () {',
-                    "    pm.expect(pm.response.json().drinks[0].title)"
-                    ".to.eql('Udaci-Spice Latte v2');",
+                    "    pm.expect(pm.response.json().drinks[0].title).to.eql(",
+                    "        pm.collectionVariables.get('probe_title') + ' v2');",
                     "});",
                 ],
-                body={"title": "Udaci-Spice Latte v2"},
+                raw_body=RENAME_BODY,
             ),
             request(
                 "/drinks/424242 (missing)",
@@ -617,42 +679,58 @@ def administrator_folder() -> Dict[str, Any]:
 
 
 def security_folder() -> Dict[str, Any]:
-    """Tokens that must be refused."""
+    """Tokens that must be refused.
+
+    Every request here is self-contained: it carries its own Authorization
+    header, so the folder proves something on a plain run rather than only
+    after a reviewer pastes a token in by hand.
+    """
     return folder(
         "security",
         [
             request(
-                "malformed Authorization header",
+                "wrong scheme (Basic, not Bearer)",
                 "GET",
                 "/drinks-detail",
                 [STATUS.format(401)] + error_body(401, "invalid_header"),
+                headers=[{"key": "Authorization", "value": "Basic dXNlcjpwYXNz"}],
                 description=(
-                    "Set the Authorization header to `Basic abc` on this request "
-                    "to exercise the wrong-scheme path."
+                    "RFC 7235 allows any scheme; this API accepts only Bearer."
                 ),
             ),
             request(
-                "garbage bearer token",
+                "bearer token that is not a JWT",
                 "GET",
                 "/drinks-detail",
-                [STATUS.format(401)] + error_body(401),
-                description=(
-                    "Add `Authorization: Bearer not-a-jwt` to this request."
-                ),
+                [STATUS.format(401)] + error_body(401, "invalid_header"),
+                headers=[{"key": "Authorization", "value": "Bearer not-a-jwt"}],
             ),
             request(
-                "expired token",
+                "bearer with no token",
                 "GET",
                 "/drinks-detail",
-                [
-                    STATUS.format(401),
-                    'pm.test("reports the token as expired", function () {',
-                    "    pm.expect(pm.response.json().code).to.eql('token_expired');",
+                [STATUS.format(401)] + error_body(401, "invalid_header"),
+                headers=[{"key": "Authorization", "value": "Bearer"}],
+            ),
+            request(
+                "token naming an unpublished key id",
+                "GET",
+                "/drinks-detail",
+                [STATUS.format(401)]
+                + error_body(401, "invalid_header")
+                + [
+                    'pm.test("refused before any claim is read", function () {',
+                    "    pm.expect(pm.response.json().description)",
+                    "        .to.include('signing key');",
                     "});",
                 ],
+                headers=[
+                    {"key": "Authorization", "value": "Bearer " + FORGED_KID_TOKEN}
+                ],
                 description=(
-                    "Paste a token older than 24 hours into this request's "
-                    "Authorization tab. Expiry must read as 401, never 403."
+                    "A structurally valid JWT claiming permissions, whose `kid` "
+                    "is not in the tenant's JWKS. It is refused at key lookup, "
+                    "before its claims are ever considered."
                 ),
             ),
             request(
@@ -696,8 +774,11 @@ def security_folder() -> Dict[str, Any]:
         ],
         token_variable=None,
         description=(
-            "Negative cases. Most need a token pasted into the individual "
-            "request; each description says which."
+            "Forged and malformed credentials, each carrying its own "
+            "Authorization header so the folder runs green unattended. An "
+            "expired token cannot be embedded here (it would have to be "
+            "minted by Auth0 and then wait a day); the backend covers that "
+            "case in tests/test_auth.py::test_expired_token."
         ),
     )
 

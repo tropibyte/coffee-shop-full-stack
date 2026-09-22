@@ -15,7 +15,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "2853ad66-a28d-4074-96d7-e1894aae910d",
+                "id": "13063535-1a52-4778-9038-634b9a792ee6",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -62,7 +62,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "108aa290-9b94-42b7-a4d6-b29ce8246202",
+                "id": "78720a68-63e4-46fa-a214-ab83d01354c7",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
@@ -101,7 +101,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "340a98eb-ea01-4380-a4b9-23720f02fc11",
+                "id": "10d49b99-4172-46b3-afb5-586b5fb2c1cf",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
@@ -154,7 +154,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "66e90908-ed12-4588-b5f1-5741f7ac5306",
+                "id": "ed83653c-eed5-48ae-afaf-342afc5a9d3b",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
@@ -205,7 +205,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "b8958bdd-d64d-4473-befd-661821f92ab7",
+                "id": "a8f36c22-7bb7-4a25-bd11-197f04821bf0",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
@@ -242,7 +242,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "e90d1f4d-606d-49d0-8049-b0486ad4dbb7",
+                "id": "8ed54100-f0c1-47a3-9a16-3e2575796d24",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
@@ -278,7 +278,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "eb2c2965-06ce-4f18-9d23-f6d65c01b3ec",
+                "id": "8cf3cb5d-55cb-4acf-b199-768163a61aa4",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
@@ -323,7 +323,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "4e451e4c-95be-4fe5-b6ee-4b64f79461e1",
+                "id": "cbe20db6-d95c-4f46-a045-c7ba7be16cfb",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -360,7 +360,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "70a03b72-ecfe-48a6-baa6-0739bf89e84b",
+                "id": "db897803-5976-49ff-a0dc-162c3ebd5727",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -408,7 +408,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "b04c9f54-ed8c-4e7e-81e0-6f843843661f",
+                "id": "7245dce8-7720-4bb4-a99c-3a7036874d25",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
@@ -464,7 +464,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "a26ab8d2-239e-4555-b087-3d2e9b525c98",
+                "id": "0bb9cb2a-3b02-46ea-b963-bfb68d70d22c",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
@@ -518,7 +518,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "957bae2b-99ca-43fd-92e8-bafac068e6ba",
+                "id": "631bc4a8-d1e3-4b73-8506-c83bf4f17ff8",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
@@ -558,7 +558,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "20f79dd9-b569-448f-948d-04579254a3a3",
+                "id": "79288977-7aa5-41ea-82c2-f468b3c39f0e",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
@@ -588,7 +588,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "4082d427-01b2-4bcc-a9b3-4c19bd14c122",
+                "id": "9e8dbe96-9bbd-4ba6-802f-be6e68758bd6",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -625,7 +625,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "3ab147ac-9f09-48d0-8389-b07df03d18d9",
+                "id": "a031a916-e28b-4798-98f3-09bcfed9e1c4",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
@@ -671,7 +671,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "788886a6-bf54-404d-9cc0-fd86cc8e5f92",
+                "id": "a0114302-7c60-4a2c-8cd1-7201a125e4a1",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -708,7 +708,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "b448ec14-73a4-44f4-b674-c96c911d3d0e",
+                "id": "b4cf3bb6-8007-427d-82a0-6f0f52ef2587",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -754,9 +754,25 @@
           "name": "/drinks (create)",
           "event": [
             {
+              "listen": "prerequest",
+              "script": {
+                "id": "3dd4222c-3b6c-42c5-ad0d-cbec3ff6681d",
+                "type": "text/javascript",
+                "exec": [
+                  "// Unique per run: the seeded menu already has an Udaci-Spice Latte,",
+                  "// and titles are unique. Without this the create 409s and the rest of",
+                  "// this folder collapses against a drink that never existed.",
+                  "pm.collectionVariables.set(",
+                  "    'probe_title',",
+                  "    'Udaci-Spice Latte ' + Date.now()",
+                  ");"
+                ]
+              }
+            },
+            {
               "listen": "test",
               "script": {
-                "id": "24426c7e-98d3-465b-91dd-ddca152253fd",
+                "id": "241a611a-3440-4cfb-a59f-f07b9f0f2a0f",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -774,7 +790,8 @@
                   "});",
                   "pm.test(\"returns the long form of the new drink\", function () {",
                   "    var drink = pm.response.json().drinks[0];",
-                  "    pm.expect(drink.title).to.eql('Udaci-Spice Latte');",
+                  "    pm.expect(drink.title).to.eql(",
+                  "        pm.collectionVariables.get('probe_title'));",
                   "    pm.expect(drink.recipe.length).to.eql(3);",
                   "    pm.expect(drink.recipe[0]).to.have.property('name');",
                   "});"
@@ -802,7 +819,7 @@
             "description": "Creates the drink the rest of this folder edits and deletes, so the folder leaves no residue and can be re-run.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Udaci-Spice Latte\",\n  \"recipe\": [\n    {\n      \"name\": \"blue foam\",\n      \"color\": \"#2ec4f1\",\n      \"parts\": 1\n    },\n    {\n      \"name\": \"espresso\",\n      \"color\": \"#4b2e1e\",\n      \"parts\": 2\n    },\n    {\n      \"name\": \"steamed milk\",\n      \"color\": \"#f4e6cd\",\n      \"parts\": 3\n    }\n  ]\n}",
+              "raw": "{\n  \"title\": \"{{probe_title}}\",\n  \"recipe\": [\n    { \"name\": \"blue foam\", \"color\": \"#2ec4f1\", \"parts\": 1 },\n    { \"name\": \"espresso\", \"color\": \"#4b2e1e\", \"parts\": 2 },\n    { \"name\": \"steamed milk\", \"color\": \"#f4e6cd\", \"parts\": 3 }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -818,7 +835,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "a51e9acf-4b41-4ca4-961e-9349d64d2ca4",
+                "id": "e143736a-54a0-4d97-b582-2be5bd6bb814",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });",
@@ -849,10 +866,10 @@
                 "drinks"
               ]
             },
-            "description": "A unique constraint, reported as a conflict.",
+            "description": "Re-posts the title the previous request just created, so the conflict is real rather than a collision with seed data.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Udaci-Spice Latte\",\n  \"recipe\": [\n    {\n      \"name\": \"blue foam\",\n      \"color\": \"#2ec4f1\",\n      \"parts\": 1\n    },\n    {\n      \"name\": \"espresso\",\n      \"color\": \"#4b2e1e\",\n      \"parts\": 2\n    },\n    {\n      \"name\": \"steamed milk\",\n      \"color\": \"#f4e6cd\",\n      \"parts\": 3\n    }\n  ]\n}",
+              "raw": "{\n  \"title\": \"{{probe_title}}\",\n  \"recipe\": [\n    { \"name\": \"blue foam\", \"color\": \"#2ec4f1\", \"parts\": 1 },\n    { \"name\": \"espresso\", \"color\": \"#4b2e1e\", \"parts\": 2 },\n    { \"name\": \"steamed milk\", \"color\": \"#f4e6cd\", \"parts\": 3 }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -868,7 +885,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "c9302b4c-4d9c-4914-81d0-8f263c81e29e",
+                "id": "166d4987-09ba-47f7-95bc-d08b2a1d3693",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });",
@@ -918,7 +935,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "df67156f-22ea-4ba1-b8bd-4530141167e3",
+                "id": "27ee6c91-ffda-4dd0-9978-73bee0d44657",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -930,7 +947,8 @@
                   "    pm.expect(jsonData.drinks).to.be.an('array');",
                   "});",
                   "pm.test(\"the title was updated\", function () {",
-                  "    pm.expect(pm.response.json().drinks[0].title).to.eql('Udaci-Spice Latte v2');",
+                  "    pm.expect(pm.response.json().drinks[0].title).to.eql(",
+                  "        pm.collectionVariables.get('probe_title') + ' v2');",
                   "});"
                 ]
               }
@@ -957,7 +975,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Udaci-Spice Latte v2\"\n}",
+              "raw": "{\n  \"title\": \"{{probe_title}} v2\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -973,7 +991,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "eb98945e-c9b6-425b-ad4b-46e2774a90ad",
+                "id": "3a3a5370-f3a4-4f07-a154-3377c9620cc2",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
@@ -1024,7 +1042,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "7b69c951-53ee-4f01-b453-5d071fd415b3",
+                "id": "55f7e22d-0c89-4a9c-b426-e408e49dc039",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1062,7 +1080,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "8ef90631-0217-4fad-b994-85f6ab4f7e6c",
+                "id": "94d307fa-6669-428e-a65d-6594820e924a",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
@@ -1099,7 +1117,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "58a3bed8-272c-492a-a997-b609dad53c60",
+                "id": "854f6000-c7df-489e-a403-e354d410cc3d",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1136,7 +1154,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "4e787612-6bf9-4d13-91e9-439ba1e99cf1",
+                "id": "1672dd12-38dc-480f-9c2e-b7a9ab5c4520",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1174,7 +1192,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "37708465-c93c-4a47-8ecd-b969280b844e",
+                "id": "8448ec53-1fef-4c2f-9e14-bb218d8a9f7a",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
@@ -1221,7 +1239,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "f7f071af-3313-48e4-8373-6dbfafe88847",
+                "id": "8b984358-3939-48f9-8006-6a3bb63b7083",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
@@ -1267,7 +1285,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "825a8a0e-7762-40c1-ade3-b1220ba71486",
+                "id": "8ee498b6-cd69-45cb-8484-857bf345f952",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1304,7 +1322,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "f6aa82f3-6eec-4697-8276-c1f513aa13f5",
+                "id": "2984f918-83aa-4df7-a190-98dc8b155083",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1338,7 +1356,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "9f36c746-d327-49f2-8f26-f79997dca100",
+                "id": "a6bac083-affe-474d-b055-36882f60e5bb",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1373,7 +1391,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "99ab14a6-adea-4cb9-b993-f130fe1a179b",
+                "id": "0b2861ce-3348-4596-9b0c-f35d15d49f3c",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });",
@@ -1420,7 +1438,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "2bb6f73c-aaa5-4422-a6b0-73cc3c029c02",
+                "id": "db63d313-c03d-49e8-9678-ef88c4bd8fc8",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1475,12 +1493,12 @@
       "name": "security",
       "item": [
         {
-          "name": "malformed Authorization header",
+          "name": "wrong scheme (Basic, not Bearer)",
           "event": [
             {
               "listen": "test",
               "script": {
-                "id": "d561b070-d240-4bda-9f82-9267c9613fd5",
+                "id": "21bc7149-d806-41bd-a699-55204d1dedf1",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
@@ -1499,7 +1517,12 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic dXNlcjpwYXNz"
+              }
+            ],
             "url": {
               "raw": "{{host}}/drinks-detail",
               "host": [
@@ -1509,17 +1532,17 @@
                 "drinks-detail"
               ]
             },
-            "description": "Set the Authorization header to `Basic abc` on this request to exercise the wrong-scheme path."
+            "description": "RFC 7235 allows any scheme; this API accepts only Bearer."
           },
           "response": []
         },
         {
-          "name": "garbage bearer token",
+          "name": "bearer token that is not a JWT",
           "event": [
             {
               "listen": "test",
               "script": {
-                "id": "77cdd403-b89e-4b6c-8074-fb3cfd73a84b",
+                "id": "57ffde4f-7fa6-41af-bf69-9f876d1255c0",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
@@ -1528,6 +1551,9 @@
                   "    pm.expect(jsonData.success).to.eql(false);",
                   "    pm.expect(jsonData.error).to.eql(401);",
                   "    pm.expect(jsonData.message).to.be.a('string');",
+                  "});",
+                  "pm.test(\"error code is invalid_header\", function () {",
+                  "    pm.expect(pm.response.json().code).to.eql('invalid_header');",
                   "});"
                 ]
               }
@@ -1535,7 +1561,12 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer not-a-jwt"
+              }
+            ],
             "url": {
               "raw": "{{host}}/drinks-detail",
               "host": [
@@ -1545,22 +1576,28 @@
                 "drinks-detail"
               ]
             },
-            "description": "Add `Authorization: Bearer not-a-jwt` to this request."
+            "description": ""
           },
           "response": []
         },
         {
-          "name": "expired token",
+          "name": "bearer with no token",
           "event": [
             {
               "listen": "test",
               "script": {
-                "id": "2f48a79c-70ce-4053-92ac-5a19cc2ea409",
+                "id": "25024c0e-166c-4a5d-ae07-cb46d0932f82",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
-                  "pm.test(\"reports the token as expired\", function () {",
-                  "    pm.expect(pm.response.json().code).to.eql('token_expired');",
+                  "pm.test(\"error body has the documented shape\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "    pm.expect(jsonData.error).to.eql(401);",
+                  "    pm.expect(jsonData.message).to.be.a('string');",
+                  "});",
+                  "pm.test(\"error code is invalid_header\", function () {",
+                  "    pm.expect(pm.response.json().code).to.eql('invalid_header');",
                   "});"
                 ]
               }
@@ -1568,7 +1605,12 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer"
+              }
+            ],
             "url": {
               "raw": "{{host}}/drinks-detail",
               "host": [
@@ -1578,7 +1620,55 @@
                 "drinks-detail"
               ]
             },
-            "description": "Paste a token older than 24 hours into this request's Authorization tab. Expiry must read as 401, never 403."
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "token naming an unpublished key id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "2f425516-b9aa-40a0-834f-1db1dad5c30a",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"error body has the documented shape\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "    pm.expect(jsonData.error).to.eql(401);",
+                  "    pm.expect(jsonData.message).to.be.a('string');",
+                  "});",
+                  "pm.test(\"error code is invalid_header\", function () {",
+                  "    pm.expect(pm.response.json().code).to.eql('invalid_header');",
+                  "});",
+                  "pm.test(\"refused before any claim is read\", function () {",
+                  "    pm.expect(pm.response.json().description)",
+                  "        .to.include('signing key');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Im5vLXN1Y2gta2V5LWlkIn0.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfGZvcmdlZCIsImF1ZCI6ImNvZmZlZS1zaG9wIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDAsInBlcm1pc3Npb25zIjpbImRlbGV0ZTpkcmlua3MiXX0.bm90LWEtcmVhbC1zaWduYXR1cmU"
+              }
+            ],
+            "url": {
+              "raw": "{{host}}/drinks-detail",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "drinks-detail"
+              ]
+            },
+            "description": "A structurally valid JWT claiming permissions, whose `kid` is not in the tenant's JWKS. It is refused at key lookup, before its claims are ever considered."
           },
           "response": []
         },
@@ -1588,7 +1678,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "be53f08b-9f4a-4ec7-9af1-546fde09d12c",
+                "id": "4c9380b9-5a3c-47ea-90b8-3377296bad3c",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1623,7 +1713,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "8930f411-eaad-45d1-a7b4-67024db7acd4",
+                "id": "150cef79-ae39-4563-b8f2-3922b62a1694",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
@@ -1659,7 +1749,7 @@
           "response": []
         }
       ],
-      "description": "Negative cases. Most need a token pasted into the individual request; each description says which.",
+      "description": "Forged and malformed credentials, each carrying its own Authorization header so the folder runs green unattended. An expired token cannot be embedded here (it would have to be minted by Auth0 and then wait a day); the backend covers that case in tests/test_auth.py::test_expired_token.",
       "auth": {
         "type": "noauth"
       }
