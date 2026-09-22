@@ -28,7 +28,7 @@ import json
 import os
 import sys
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_COLLECTION = os.path.join(
